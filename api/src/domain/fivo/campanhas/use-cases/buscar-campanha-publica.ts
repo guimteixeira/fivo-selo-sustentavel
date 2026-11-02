@@ -1,7 +1,6 @@
 import { Either, left, right } from '@core/either';
 import { ResourceNotFoundError } from '@core/errors/resource-not-found-error';
 import {
-  Beneficiada,
   TipoBeneficiada,
   CausaRepository,
   InstituicaoRepository,
@@ -18,7 +17,12 @@ import {
   VigenciaDetalhe,
 } from './campanha-detalhe';
 
-export type SituacaoCampanha = 'NAO_INICIADA' | 'EM_ANDAMENTO';
+import {
+  resolverNomeBeneficiada,
+  calcularSituacao,
+  SituacaoCampanha,
+} from './campanha-publica';
+export type { SituacaoCampanha };
 
 export interface CampanhaPublica {
   nome: string;
@@ -90,26 +94,18 @@ export class BuscarCampanhaPublicaUseCase {
       empresa: empresa.nomeFantasia,
       beneficiada: {
         tipo: beneficiada.tipo,
-        nome: await this.nomeDaBeneficiada(beneficiada),
+        nome: await resolverNomeBeneficiada(
+          beneficiada,
+          this.instituicaoRepository,
+          this.causaRepository,
+        ),
       },
       regraDoacao: descreverRegra(regraDoacao),
       meta: campanha.meta ? paraDecimal(campanha.meta.centavos) : null,
       vigencia: descreverVigencia(vigencia),
-      situacao: vigencia.naoIniciadaEm(hoje) ? 'NAO_INICIADA' : 'EM_ANDAMENTO',
+      situacao: calcularSituacao(vigencia, hoje),
     };
 
     return right(campanhaPublica);
-  }
-
-  private async nomeDaBeneficiada(beneficiada: Beneficiada): Promise<string> {
-    if (beneficiada.tipo === 'INSTITUICAO') {
-      const instituicao = await this.instituicaoRepository.findById(
-        beneficiada.id,
-      );
-      return instituicao?.nomeFantasia ?? '';
-    }
-
-    const causa = await this.causaRepository.findById(beneficiada.id);
-    return causa?.nome ?? '';
   }
 }

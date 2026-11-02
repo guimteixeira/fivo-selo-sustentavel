@@ -63,3 +63,90 @@ export async function baixarSelo(id: string): Promise<SeloBaixado> {
     nomeArquivo: nomeDoArquivo(res.headers.get("content-disposition")),
   };
 }
+
+// Corpo de POST /campanhas: só o nome é obrigatório; beneficiada é
+// `instituicaoId` ou `causaId`, nunca os dois. Decimais em string e datas
+// AAAA-MM-DD, como no restante do contrato.
+export type NovaCampanha = {
+  nome: string;
+  descricao?: string;
+  instituicaoId?: string;
+  causaId?: string;
+  regraDoacao?: RegraDoacao;
+  meta?: string;
+  vigencia?: { inicio: string; fim?: string };
+};
+
+export type CampanhaCriada = {
+  id: string;
+  idPublico: string;
+};
+
+export function criarCampanha(dados: NovaCampanha): Promise<CampanhaCriada> {
+  return request("/campanhas", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(dados),
+  });
+}
+
+export function enviarCapa(id: string, arquivo: File): Promise<void> {
+  const formData = new FormData();
+  formData.append("capa", arquivo);
+
+  // Sem Content-Type manual: o browser define o boundary do multipart sozinho.
+  return request(`/campanhas/${encodeURIComponent(id)}/capa`, {
+    method: "PUT",
+    body: formData,
+  });
+}
+
+export function submeterCampanha(id: string): Promise<void> {
+  return request(`/campanhas/${encodeURIComponent(id)}/submissao`, { method: "POST" });
+}
+
+// A beneficiada vem só com tipo e id; o nome sai de services/instituicoes.ts.
+export type Beneficiada = { tipo: "INSTITUICAO" | "CAUSA"; id: string };
+
+export type Vigencia = { inicio: string; fim?: string };
+
+// Resposta de GET /campanhas/{id} e de PATCH /campanhas/{id}. Datas-hora
+// (`submetidaEm`, `criadaEm`...) chegam em ISO.
+export type CampanhaDetalhe = {
+  id: string;
+  idPublico: string;
+  nome: string;
+  descricao: string | null;
+  capaArquivoId: string | null;
+  beneficiada: Beneficiada | null;
+  regraDoacao: RegraDoacao | null;
+  meta: string | null;
+  vigencia: Vigencia | null;
+  status: StatusCampanha;
+  submetidaEm: string | null;
+  motivoUltimaRejeicao: string | null;
+  // Só os valores propostos; os atuais estão nos campos acima.
+  alteracaoPendente: {
+    beneficiada: Beneficiada;
+    regraDoacao: RegraDoacao;
+    vigencia: Vigencia;
+    abertaEm: string;
+  } | null;
+  criadaEm: string;
+  atualizadaEm: string | null;
+};
+
+// Edição parcial: só o que vier é alterado. A capa tem rota própria.
+export type EdicaoCampanha = Partial<NovaCampanha>;
+
+export function detalharCampanha(id: string): Promise<CampanhaDetalhe> {
+  return request(`/campanhas/${encodeURIComponent(id)}`);
+}
+
+export function editarCampanha(id: string, dados: EdicaoCampanha): Promise<CampanhaDetalhe> {
+  return request(`/campanhas/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(dados),
+  });
+}
