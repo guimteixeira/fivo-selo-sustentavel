@@ -3,17 +3,21 @@ import {
   OrdenacaoListaEmpresa,
 } from '@domain/fivo/empresas/ports/empresa-repository';
 import { Empresa } from '@domain/fivo/empresas/entities/empresa';
+import { SlugEmUsoError } from '@domain/fivo/shared';
+import { UniqueEntityId } from '@core/types/entities/unique-entity-id';
 
 /**
  * Copia a entidade para que o double guarde um estado próprio, como uma linha
  * de banco: mutar o objeto lido não muda o armazenado sem um `save` ou um
  * `salvarTransicao`. `decisao` fornece as 4 colunas de decisão e `troca` as 3
- * de troca de e-mail; o `save` preserva ambas do item guardado.
+ * de troca de e-mail; o `save` preserva ambas do item guardado. O `slug`
+ * acompanha o grupo de decisão: só `salvarTransicao` o grava.
  */
 function copiar(
   empresa: Empresa,
   decisao: Empresa = empresa,
   troca: Empresa = empresa,
+  id: UniqueEntityId = empresa.id,
 ): Empresa {
   return Empresa.create(
     {
@@ -41,13 +45,25 @@ function copiar(
       decididoPor: decisao.decididoPor,
       decididoEm: decisao.decididoEm,
       motivoDecisao: decisao.motivoDecisao,
+      slug: decisao.slug,
     },
-    empresa.id,
+    id,
   );
 }
 
 export class InMemoryEmpresaRepository implements EmpresaRepository {
   public items: Empresa[] = [];
+  private conflitoDeSlugForcado = false;
+
+  /**
+   * Simula a corrida de aprovações: a próxima `salvarTransicao` com slug
+   * encontra outra empresa já dona desse slug e lança `SlugEmUsoError`. Só
+   * vale uma vez, e a rival fica guardada, então `listarSlugsComPrefixo` já
+   * mostra o slug ocupado na tentativa seguinte.
+   */
+  forcarConflitoDeSlugNaProximaTransicao(): void {
+    this.conflitoDeSlugForcado = true;
+  }
 
   findById(id: string): Promise<Empresa | null> {
     const empresa = this.items.find((item) => item.id.toString() === id);
@@ -73,14 +89,16 @@ export class InMemoryEmpresaRepository implements EmpresaRepository {
     return Promise.resolve(empresa ? copiar(empresa) : null);
   }
 
-  findBySlug(): Promise<Empresa | null> {
-    // Provisório: implementação real na T8.
-    return Promise.reject(new Error('não implementado: T8'));
+  findBySlug(slug: string): Promise<Empresa | null> {
+    const empresa = this.items.find((item) => item.slug?.valor === slug);
+    return Promise.resolve(empresa ? copiar(empresa) : null);
   }
 
-  listarSlugsComPrefixo(): Promise<string[]> {
-    // Provisório: implementação real na T8.
-    return Promise.reject(new Error('não implementado: T8'));
+  listarSlugsComPrefixo(prefixo: string): Promise<string[]> {
+    const slugs = this.items
+      .map((item) => item.slug?.valor)
+      .filter((valor): valor is string => !!valor?.startsWith(prefixo));
+    return Promise.resolve(slugs);
   }
 
   listarPorEstado(
@@ -130,6 +148,12 @@ export class InMemoryEmpresaRepository implements EmpresaRepository {
   }
 
   salvarTransicao(empresa: Empresa, estadoEsperado: string): Promise<boolean> {
+    if (empresa.slug && this.conflitoDeSlugForcado) {
+      this.conflitoDeSlugForcado = false;
+      this.items.push(copiar(empresa, empresa, empresa, new UniqueEntityId()));
+      return Promise.reject(new SlugEmUsoError());
+    }
+
     const index = this.items.findIndex((item) => item.id.equals(empresa.id));
 
     // CAS: espelha o `updateMany` com `status: estadoEsperado` do adaptador
@@ -139,6 +163,17 @@ export class InMemoryEmpresaRepository implements EmpresaRepository {
       (this.items[index].status as string) !== estadoEsperado
     ) {
       return Promise.resolve(false);
+    }
+
+    const slugEmUso = this.items.some(
+      (item) =>
+        !item.id.equals(empresa.id) &&
+        !!empresa.slug &&
+        item.slug?.valor === empresa.slug.valor,
+    );
+
+    if (slugEmUso) {
+      return Promise.reject(new SlugEmUsoError());
     }
 
     this.items[index] = copiar(empresa);
