@@ -15,8 +15,6 @@ export const APP_ROUTES = {
   private: {
     dashboard: '/dashboard',
     campanhas: '/campanhas',
-    comprovantes: '/comprovantes',
-    selos: '/selos',
     instituicao: '/instituicao',
   },
   admin: {
