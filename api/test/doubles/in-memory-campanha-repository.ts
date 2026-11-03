@@ -102,6 +102,11 @@ export class InMemoryCampanhaRepository implements CampanhaRepository {
     return Promise.resolve(emAnalise.map((item) => copiar(item)));
   }
 
+  listarPorEmpresa(): Promise<Campanha[]> {
+    // Provisório: implementação real na T9.
+    return Promise.reject(new Error('não implementado: T9'));
+  }
+
   private gravarAlteracaoDecidida(
     alteracao: AlteracaoCompromisso | null,
   ): void {
