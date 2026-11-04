@@ -127,6 +127,11 @@ export class PrismaCampanhaRepository implements CampanhaRepository {
     return campanhas.map((campanha) => PrismaCampanhaMapper.toDomain(campanha));
   }
 
+  listarPorEmpresa(): Promise<Campanha[]> {
+    // Provisório: implementação real na T21.
+    return Promise.reject(new Error('não implementado: T21'));
+  }
+
   // Reaproveita a transação do `UnitOfWork`, se houver; senão abre uma.
   private emTransacao<T>(
     job: (db: Prisma.TransactionClient) => Promise<T>,

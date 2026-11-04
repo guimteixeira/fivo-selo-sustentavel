@@ -4,6 +4,7 @@ import {
   Campanha,
   CampanhaStatus,
 } from '@domain/fivo/campanhas/entities/campanha';
+import { SlugEmUsoError } from '@domain/fivo/shared';
 
 function copiarAlteracao(
   alteracao: AlteracaoCompromisso | null | undefined,
@@ -53,6 +54,7 @@ function copiar(
       versao,
       createdAt: campanha.createdAt,
       updatedAt: campanha.updatedAt,
+      slug: campanha.slug,
     },
     campanha.id,
   );
@@ -62,6 +64,17 @@ export class InMemoryCampanhaRepository implements CampanhaRepository {
   public items: Campanha[] = [];
   /** Histórico das alterações decididas gravadas pelo `salvar`. */
   public alteracoesDecididas: AlteracaoCompromisso[] = [];
+  private conflitoDeSlugForcado = false;
+
+  /**
+   * Simula a corrida de aprovações: o próximo `salvar` com slug encontra outra
+   * campanha da mesma empresa já dona desse slug e lança `SlugEmUsoError`. Só
+   * vale uma vez, e a rival fica guardada, então `listarPorEmpresa` já mostra
+   * o slug ocupado na tentativa seguinte.
+   */
+  forcarConflitoDeSlugNoProximoSalvar(): void {
+    this.conflitoDeSlugForcado = true;
+  }
 
   findById(id: string): Promise<Campanha | null> {
     const campanha = this.items.find((item) => item.id.toString() === id);
@@ -87,6 +100,33 @@ export class InMemoryCampanhaRepository implements CampanhaRepository {
       return Promise.resolve(false);
     }
 
+    if (campanha.slug && this.conflitoDeSlugForcado) {
+      this.conflitoDeSlugForcado = false;
+      this.items.push(
+        Campanha.create({
+          empresaId: campanha.empresaId,
+          nome: campanha.nome,
+          status: campanha.status,
+          slug: campanha.slug,
+        }),
+      );
+      return Promise.reject(new SlugEmUsoError());
+    }
+
+    // Espelha o índice único `(empresaId, slug)` do adaptador Prisma: o mesmo
+    // slug em empresas diferentes é permitido.
+    const slugEmUso = this.items.some(
+      (item) =>
+        !item.id.equals(campanha.id) &&
+        item.empresaId.equals(campanha.empresaId) &&
+        !!campanha.slug &&
+        item.slug?.valor === campanha.slug.valor,
+    );
+
+    if (slugEmUso) {
+      return Promise.reject(new SlugEmUsoError());
+    }
+
     this.items[index] = copiar(campanha, versaoEsperada + 1);
     this.gravarAlteracaoDecidida(campanha.alteracaoDecidida);
     return Promise.resolve(true);
@@ -100,6 +140,14 @@ export class InMemoryCampanhaRepository implements CampanhaRepository {
     );
 
     return Promise.resolve(emAnalise.map((item) => copiar(item)));
+  }
+
+  listarPorEmpresa(empresaId: string): Promise<Campanha[]> {
+    const daEmpresa = this.items
+      .filter((item) => item.empresaId.toString() === empresaId)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    return Promise.resolve(daEmpresa.map((item) => copiar(item)));
   }
 
   private gravarAlteracaoDecidida(
