@@ -40,6 +40,7 @@ export const rotaInicialDoPapel = (papel: Papel): string => ROTA_INICIAL_POR_PAP
 
 export const isPublicRoute = (path: string): boolean => {
   if (path.startsWith('/parceiros')) return true;
+  if (path.startsWith('/empresa/')) return true;
   if (path.startsWith('/recuperar-senha')) return true;
   return (Object.values(APP_ROUTES.public) as string[]).includes(path);
 };
