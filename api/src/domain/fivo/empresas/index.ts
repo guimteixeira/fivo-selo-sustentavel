@@ -9,6 +9,7 @@ export * from './use-cases/confirmar-troca-email';
 export * from './use-cases/criar-empresa';
 export * from './use-cases/editar-dados-empresa';
 export * from './use-cases/listar-fila-aprovacao';
+export * from './use-cases/listar-parceiros';
 export * from './use-cases/reativar-empresa';
 export * from './use-cases/rejeitar-empresa';
 export * from './use-cases/suspender-empresa';
