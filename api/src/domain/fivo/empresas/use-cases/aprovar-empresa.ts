@@ -7,10 +7,22 @@ import {
   RegistroAuditoriaRepository,
   Mailer,
   TemplateEmail,
+  Slug,
+  SlugEmUsoError,
+  proximoSlugLivre,
 } from '@domain/fivo/shared';
 import { User, UserRole, UserRepository } from '@domain/fivo/identidade';
 import { Injectable } from '@nestjs/common';
+import { Empresa, EmpresaStatus } from '../entities/empresa';
 import { EmpresaRepository } from '../ports/empresa-repository';
+
+/** Aprovações simultâneas de homônimas disputam o mesmo slug (VIT-01). */
+const TENTATIVAS_DE_SLUG = 3;
+
+type Decisao = Either<
+  ResourceNotFoundError | TransicaoInvalidaError,
+  { empresa: Empresa; statusAnterior: EmpresaStatus }
+>;
 
 export type AprovarEmpresaUseCaseResponse = Either<
   NotAllowedError | ResourceNotFoundError | TransicaoInvalidaError,
@@ -34,27 +46,13 @@ export class AprovarEmpresaUseCase {
       return left(new NotAllowedError());
     }
 
-    const empresa = await this.empresaRepository.findById(empresaId);
+    const decisao = await this.aprovarComSlug(empresaId, user);
 
-    if (!empresa) {
-      return left(new ResourceNotFoundError('Empresa não encontrada'));
+    if (decisao.isLeft()) {
+      return left(decisao.value);
     }
 
-    const statusAnterior = empresa.status;
-    const result = empresa.aprovar(user.id);
-
-    if (result.isLeft()) {
-      return left(result.value);
-    }
-
-    const aplicada = await this.empresaRepository.salvarTransicao(
-      empresa,
-      statusAnterior,
-    );
-
-    if (!aplicada) {
-      return left(new TransicaoInvalidaError());
-    }
+    const { empresa, statusAnterior } = decisao.value;
 
     await this.registroAuditoriaRepository.registrar({
       id: randomUUID(),
@@ -85,5 +83,61 @@ export class AprovarEmpresaUseCase {
     }
 
     return right(undefined);
+  }
+
+  /**
+   * Em `SlugEmUsoError`, outra aprovação gravou o mesmo slug primeiro: relê a
+   * empresa e recalcula o sufixo. Esgotadas as tentativas, o erro sobe.
+   */
+  private async aprovarComSlug(
+    empresaId: string,
+    user: User,
+  ): Promise<Decisao> {
+    for (let tentativa = 1; ; tentativa++) {
+      try {
+        return await this.tentarAprovar(empresaId, user);
+      } catch (error) {
+        if (
+          !(error instanceof SlugEmUsoError) ||
+          tentativa >= TENTATIVAS_DE_SLUG
+        ) {
+          throw error;
+        }
+      }
+    }
+  }
+
+  private async tentarAprovar(empresaId: string, user: User): Promise<Decisao> {
+    const empresa = await this.empresaRepository.findById(empresaId);
+
+    if (!empresa) {
+      return left(new ResourceNotFoundError('Empresa não encontrada'));
+    }
+
+    const statusAnterior = empresa.status;
+    const result = empresa.aprovar(user.id);
+
+    if (result.isLeft()) {
+      return left(result.value);
+    }
+
+    if (!empresa.slug) {
+      const base = Slug.de(empresa.nomeFantasia, 'empresa');
+      const ocupados = await this.empresaRepository.listarSlugsComPrefixo(
+        base.valor,
+      );
+      empresa.atribuirSlug(proximoSlugLivre(base, ocupados));
+    }
+
+    const aplicada = await this.empresaRepository.salvarTransicao(
+      empresa,
+      statusAnterior,
+    );
+
+    if (!aplicada) {
+      return left(new TransicaoInvalidaError());
+    }
+
+    return right({ empresa, statusAnterior });
   }
 }

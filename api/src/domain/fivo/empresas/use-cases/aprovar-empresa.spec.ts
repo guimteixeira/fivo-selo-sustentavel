@@ -8,7 +8,12 @@ import { UserFactory } from '@test/factories/user-factory';
 import { InMemoryEmpresaRepository } from '@test/doubles/in-memory-empresa-repository';
 import { InMemoryRegistroAuditoriaRepository } from '@test/doubles/in-memory-registro-auditoria-repository';
 import { InMemoryUserRepository } from '@test/doubles/in-memory-user-repository';
-import { TransicaoInvalidaError, TemplateEmail } from '@domain/fivo/shared';
+import {
+  TransicaoInvalidaError,
+  TemplateEmail,
+  Slug,
+  SlugEmUsoError,
+} from '@domain/fivo/shared';
 import { AprovarEmpresaUseCase } from './aprovar-empresa';
 
 const MOTIVO_DA_VENCEDORA = 'Documentação incompleta para validar o CNPJ.';
@@ -33,7 +38,9 @@ describe('AprovarEmpresaUseCase', () => {
     );
   });
 
-  async function criarEmpresaPendente() {
+  async function criarEmpresaPendente(
+    props: Parameters<typeof EmpresaFactory.create>[0] = {},
+  ) {
     const empresaUser = UserFactory.create({
       email: 'empresa@example.com',
       role: UserRole.EMPRESA,
@@ -43,6 +50,7 @@ describe('AprovarEmpresaUseCase', () => {
     const empresa = EmpresaFactory.create({
       usuarioId: empresaUser.id,
       status: EmpresaStatus.PENDENTE_APROVACAO,
+      ...props,
     });
     await empresaRepository.create(empresa);
 
@@ -202,5 +210,124 @@ describe('AprovarEmpresaUseCase', () => {
     expect(guardada.motivoDecisao).toBe(MOTIVO_DA_VENCEDORA);
     expect(registroAuditoriaRepository.items).toHaveLength(0);
     expect(mailer.mensagens).toHaveLength(0);
+  });
+
+  describe('slug (VIT-01)', () => {
+    const admin = UserFactory.create({ role: UserRole.ADMIN });
+
+    it('should assign the slug derived from nomeFantasia on approval', async () => {
+      const empresa = await criarEmpresaPendente({
+        nomeFantasia: 'Café Serra Verde',
+      });
+
+      const response = await sut.execute(empresa.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      const aprovada = await lerEmpresa(empresa.id.toString());
+      expect(aprovada.slug?.valor).toBe('cafe-serra-verde');
+    });
+
+    it('should give a second empresa with the same name the -2 suffix and keep the first one', async () => {
+      const primeira = await criarEmpresaPendente({
+        nomeFantasia: 'Café Serra Verde',
+      });
+      const segunda = await criarEmpresaPendente({
+        nomeFantasia: 'Café Serra Verde',
+      });
+
+      await sut.execute(primeira.id.toString(), admin);
+      const response = await sut.execute(segunda.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      expect((await lerEmpresa(primeira.id.toString())).slug?.valor).toBe(
+        'cafe-serra-verde',
+      );
+      expect((await lerEmpresa(segunda.id.toString())).slug?.valor).toBe(
+        'cafe-serra-verde-2',
+      );
+    });
+
+    it('should keep the slug of an empresa that already has one', async () => {
+      const empresa = await criarEmpresaPendente({
+        nomeFantasia: 'Café Serra Verde',
+        slug: Slug.reconstruir('nome-antigo'),
+      });
+
+      const response = await sut.execute(empresa.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      const aprovada = await lerEmpresa(empresa.id.toString());
+      expect(aprovada.status).toBe(EmpresaStatus.APROVADA);
+      expect(aprovada.slug?.valor).toBe('nome-antigo');
+    });
+
+    it('should retry with -2 and succeed when a simultaneous approval takes the slug first', async () => {
+      const empresa = await criarEmpresaPendente({
+        nomeFantasia: 'Café Serra Verde',
+      });
+      empresaRepository.forcarConflitoDeSlugNaProximaTransicao();
+
+      const response = await sut.execute(empresa.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      const aprovada = await lerEmpresa(empresa.id.toString());
+      expect(aprovada.status).toBe(EmpresaStatus.APROVADA);
+      expect(aprovada.slug?.valor).toBe('cafe-serra-verde-2');
+      expect(registroAuditoriaRepository.items).toHaveLength(1);
+      expect(mailer.mensagens).toHaveLength(1);
+    });
+
+    it('should still succeed when the slug conflict happens on the first two attempts', async () => {
+      const empresa = await criarEmpresaPendente({
+        nomeFantasia: 'Café Serra Verde',
+      });
+      jest
+        .spyOn(empresaRepository, 'salvarTransicao')
+        .mockRejectedValueOnce(new SlugEmUsoError())
+        .mockRejectedValueOnce(new SlugEmUsoError());
+
+      const response = await sut.execute(empresa.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      const aprovada = await lerEmpresa(empresa.id.toString());
+      expect(aprovada.status).toBe(EmpresaStatus.APROVADA);
+      expect(aprovada.slug?.valor).toBe('cafe-serra-verde');
+    });
+
+    it('should rethrow SlugEmUsoError after 3 conflicting attempts and keep the empresa PENDENTE_APROVACAO', async () => {
+      const empresa = await criarEmpresaPendente({
+        nomeFantasia: 'Café Serra Verde',
+      });
+      const salvarTransicao = jest
+        .spyOn(empresaRepository, 'salvarTransicao')
+        .mockRejectedValue(new SlugEmUsoError());
+
+      await expect(
+        sut.execute(empresa.id.toString(), admin),
+      ).rejects.toBeInstanceOf(SlugEmUsoError);
+
+      expect(salvarTransicao).toHaveBeenCalledTimes(3);
+      const guardada = await lerEmpresa(empresa.id.toString());
+      expect(guardada.status).toBe(EmpresaStatus.PENDENTE_APROVACAO);
+      expect(guardada.slug).toBeFalsy();
+      expect(registroAuditoriaRepository.items).toHaveLength(0);
+      expect(mailer.mensagens).toHaveLength(0);
+    });
+
+    it('should rethrow other save errors without retrying', async () => {
+      const empresa = await criarEmpresaPendente({
+        nomeFantasia: 'Café Serra Verde',
+      });
+      const falha = new Error('banco indisponível');
+      const salvarTransicao = jest
+        .spyOn(empresaRepository, 'salvarTransicao')
+        .mockRejectedValue(falha);
+
+      await expect(sut.execute(empresa.id.toString(), admin)).rejects.toBe(
+        falha,
+      );
+
+      expect(salvarTransicao).toHaveBeenCalledTimes(1);
+    });
   });
 });
