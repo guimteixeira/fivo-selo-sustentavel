@@ -22,7 +22,7 @@ import { InMemoryCausaRepository } from '@test/doubles/in-memory-causa-repositor
 import { InMemoryInstituicaoRepository } from '@test/doubles/in-memory-instituicao-repository';
 import { InMemoryRegistroAuditoriaRepository } from '@test/doubles/in-memory-registro-auditoria-repository';
 import { BeneficiadaIndisponivelNaDecisaoError } from '../errors/beneficiada-indisponivel-na-decisao.error';
-import { TransicaoInvalidaError } from '@domain/fivo/shared';
+import { Slug, TransicaoInvalidaError } from '@domain/fivo/shared';
 import { AprovarAlteracaoCampanhaUseCase } from './aprovar-alteracao-campanha';
 
 function valor<T>(resultado: Either<Error, T>): T {
@@ -317,5 +317,19 @@ describe('AprovarAlteracaoCampanhaUseCase', () => {
     expect(depois.alteracaoPendente?.status).toBe(AlteracaoStatus.EM_ANALISE);
     expect(registroAuditoriaRepository.items).toHaveLength(0);
     expect(campanhaRepository.alteracoesDecididas).toHaveLength(0);
+  });
+
+  it('should keep the slug when the commitment change is approved (VIT-01 AC7)', async () => {
+    const campanha = CampanhaFactory.aprovadaComAlteracao({
+      slug: Slug.reconstruir('verao-solidario'),
+    });
+    await campanhaRepository.create(campanha);
+
+    const response = await sut.execute(campanha.id.toString(), admin);
+
+    expect(response.isRight()).toBe(true);
+    const depois = await salva(campanha);
+    expect(depois.alteracaoPendente).toBeFalsy();
+    expect(depois.slug?.valor).toBe('verao-solidario');
   });
 });
