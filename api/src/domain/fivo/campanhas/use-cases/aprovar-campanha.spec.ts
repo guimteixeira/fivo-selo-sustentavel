@@ -19,7 +19,12 @@ import { InMemoryCausaRepository } from '@test/doubles/in-memory-causa-repositor
 import { InMemoryInstituicaoRepository } from '@test/doubles/in-memory-instituicao-repository';
 import { InMemoryRegistroAuditoriaRepository } from '@test/doubles/in-memory-registro-auditoria-repository';
 import { BeneficiadaIndisponivelNaDecisaoError } from '../errors/beneficiada-indisponivel-na-decisao.error';
-import { TransicaoInvalidaError } from '@domain/fivo/shared';
+import {
+  Slug,
+  SlugEmUsoError,
+  TransicaoInvalidaError,
+} from '@domain/fivo/shared';
+import { NomeCampanha } from '../entities/nome-campanha';
 import { AprovarCampanhaUseCase } from './aprovar-campanha';
 
 function valor<T>(resultado: Either<Error, T>): T {
@@ -209,5 +214,132 @@ describe('AprovarCampanhaUseCase', () => {
     expect(response.value).toBeInstanceOf(TransicaoInvalidaError);
     expect((await salva(campanha)).status).toBe(CampanhaStatus.EM_ANALISE);
     expect(registroAuditoriaRepository.items).toHaveLength(0);
+  });
+
+  describe('slug (VIT-01)', () => {
+    const empresaId = new UniqueEntityId();
+
+    async function criarHomonima(
+      props: Parameters<typeof CampanhaFactory.emAnalise>[0] = {},
+    ): Promise<Campanha> {
+      const instituicao = InstituicaoFactory.create({
+        status: InstituicaoStatus.APROVADA,
+      });
+      await instituicaoRepository.create(instituicao);
+      const campanha = CampanhaFactory.emAnalise({
+        empresaId,
+        nome: valor(NomeCampanha.criar('Verão Solidário')),
+        beneficiada: valor(
+          Beneficiada.criar({ instituicaoId: instituicao.id.toString() }),
+        ),
+        ...props,
+      });
+      await campanhaRepository.create(campanha);
+      return campanha;
+    }
+
+    it('should assign the slug derived from the name on approval', async () => {
+      const campanha = await criarHomonima();
+
+      const response = await sut.execute(campanha.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      expect((await salva(campanha)).slug?.valor).toBe('verao-solidario');
+    });
+
+    it('should give a same-name campaign of the same empresa the -2 suffix and keep the first one', async () => {
+      const primeira = await criarHomonima();
+      const segunda = await criarHomonima();
+
+      await sut.execute(primeira.id.toString(), admin);
+      const response = await sut.execute(segunda.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      expect((await salva(primeira)).slug?.valor).toBe('verao-solidario');
+      expect((await salva(segunda)).slug?.valor).toBe('verao-solidario-2');
+    });
+
+    it('should give a same-name campaign of another empresa the slug without suffix', async () => {
+      const daPrimeira = await criarHomonima();
+      const daOutra = await criarHomonima({ empresaId: new UniqueEntityId() });
+
+      await sut.execute(daPrimeira.id.toString(), admin);
+      const response = await sut.execute(daOutra.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      expect((await salva(daOutra)).slug?.valor).toBe('verao-solidario');
+    });
+
+    it('should keep the slug of a campaign that already has one', async () => {
+      const campanha = await criarHomonima({
+        slug: Slug.reconstruir('nome-antigo'),
+      });
+
+      const response = await sut.execute(campanha.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      const depois = await salva(campanha);
+      expect(depois.status).toBe(CampanhaStatus.APROVADA);
+      expect(depois.slug?.valor).toBe('nome-antigo');
+    });
+
+    it('should retry with -2 and succeed when a simultaneous approval takes the slug first', async () => {
+      const campanha = await criarHomonima();
+      campanhaRepository.forcarConflitoDeSlugNoProximoSalvar();
+
+      const response = await sut.execute(campanha.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      const depois = await salva(campanha);
+      expect(depois.status).toBe(CampanhaStatus.APROVADA);
+      expect(depois.slug?.valor).toBe('verao-solidario-2');
+      expect(registroAuditoriaRepository.items).toHaveLength(1);
+    });
+
+    it('should still succeed when the slug conflict happens on the first two attempts', async () => {
+      const campanha = await criarHomonima();
+      jest
+        .spyOn(campanhaRepository, 'salvar')
+        .mockRejectedValueOnce(new SlugEmUsoError())
+        .mockRejectedValueOnce(new SlugEmUsoError());
+
+      const response = await sut.execute(campanha.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      const depois = await salva(campanha);
+      expect(depois.status).toBe(CampanhaStatus.APROVADA);
+      expect(depois.slug?.valor).toBe('verao-solidario');
+    });
+
+    it('should rethrow SlugEmUsoError after 3 conflicting attempts and keep the campaign EM_ANALISE', async () => {
+      const campanha = await criarHomonima();
+      const salvar = jest
+        .spyOn(campanhaRepository, 'salvar')
+        .mockRejectedValue(new SlugEmUsoError());
+
+      await expect(
+        sut.execute(campanha.id.toString(), admin),
+      ).rejects.toBeInstanceOf(SlugEmUsoError);
+
+      expect(salvar).toHaveBeenCalledTimes(3);
+      const depois = await salva(campanha);
+      expect(depois.status).toBe(CampanhaStatus.EM_ANALISE);
+      expect(depois.slug).toBeFalsy();
+      expect(registroAuditoriaRepository.items).toHaveLength(0);
+    });
+
+    it('should rethrow other save errors without retrying', async () => {
+      const campanha = await criarHomonima();
+      const falha = new Error('banco indisponível');
+      const salvar = jest
+        .spyOn(campanhaRepository, 'salvar')
+        .mockRejectedValue(falha);
+
+      await expect(sut.execute(campanha.id.toString(), admin)).rejects.toBe(
+        falha,
+      );
+
+      expect(salvar).toHaveBeenCalledTimes(1);
+    });
   });
 });
