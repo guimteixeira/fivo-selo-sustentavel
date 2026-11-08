@@ -710,8 +710,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] `npx prisma migrate dev` gera a migration; `prisma migrate diff` sem drift
-- [ ] Gate `build` passa
+- [x] `npx prisma migrate dev` gera a migration; `prisma migrate diff` sem drift
+- [x] Gate `build` passa
 
 **Tests**: none
 **Gate**: build

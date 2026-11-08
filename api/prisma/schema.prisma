@@ -115,6 +115,8 @@ model Empresa {
   site                    String
   contato                 String
   logoArquivoId           String?       @map("logo_arquivo_id")
+  // Atribuído na primeira aprovação e nunca muda: vai impresso no QR (VIT-01).
+  slug                    String?       @unique
   status                  EmpresaStatus
   decididoPor             String?       @map("decidido_por")
   decididoEm              DateTime?     @map("decidido_em")
@@ -272,6 +274,8 @@ model Campanha {
   nome                      String
   descricao                 String?
   capaArquivoId             String?          @unique @map("capa_arquivo_id")
+  // Atribuído na primeira aprovação e nunca muda; único por empresa (VIT-01).
+  slug                      String?
   instituicaoId             String?          @map("instituicao_id")
   causaId                   String?          @map("causa_id")
   regraTipo                 TipoRegraDoacao? @map("regra_tipo")
@@ -295,6 +299,7 @@ model Campanha {
   capa        Arquivo?            @relation(fields: [capaArquivoId], references: [id])
   alteracoes  CampanhaAlteracao[]
 
+  @@unique([empresaId, slug])
   @@index([status])
   @@index([empresaId])
   @@map("campanha")
