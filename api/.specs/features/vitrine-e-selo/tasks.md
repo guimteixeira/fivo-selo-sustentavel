@@ -812,12 +812,12 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] QR do SVG, rasterizado e decodificado no teste, é exatamente a URL esperada
-- [ ] Nível de correção Q e margem ≥ 4 módulos conferidos no SVG gerado
-- [ ] SVG contém "Selo Sustentável Fivo" e nenhum elemento `<image>`
-- [ ] Duas chamadas com os mesmos slugs → bytes idênticos
-- [ ] Sem `WEB_URL` com `NODE_ENV=production` → erro na construção
-- [ ] Gate `quick` passa
+- [x] QR do SVG, rasterizado e decodificado no teste, é exatamente a URL esperada
+- [x] Nível de correção Q e margem ≥ 4 módulos conferidos no SVG gerado
+- [x] SVG contém "Selo Sustentável Fivo" e nenhum elemento `<image>`
+- [x] Duas chamadas com os mesmos slugs → bytes idênticos
+- [x] Sem `WEB_URL` com `NODE_ENV=production` → erro na construção
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
