@@ -102,7 +102,7 @@ navegador ──HTTPS──▶ web (Next, :3001) ──/api/*──▶ api (Nest
 
 | Variável          | Obrigatória | Observação                                                                                      |
 | ----------------- | ----------- | ----------------------------------------------------------------------------------------------- |
-| `NODE_ENV`        | sim         | `production`. Liga o cookie `Secure`, desliga o Swagger e passa a exigir `WEB_URL`.              |
+| `NODE_ENV`        | sim         | `production`. Liga o cookie `Secure`, desliga o Swagger e passa a exigir `WEB_URL` e `SMTP_HOST`. |
 | `DATABASE_URL`    | sim         | Postgres de produção.                                                                            |
 | `WEB_URL`         | sim         | URL pública do web, sem barra no final (ex.: `https://selo.fivo.com.br`). Sem ela, a API não sobe. |
 | `STORAGE_DIR`     | sim         | Caminho num **volume persistente**. Guarda logos, capas e documentos de validação.              |
@@ -112,6 +112,10 @@ navegador ──HTTPS──▶ web (Next, :3001) ──/api/*──▶ api (Nest
 | `PORT`            | não         | Padrão `3000`.                                                                                   |
 | `COOKIE_SECURE`   | não         | Já é `true` em produção. Só desligue se o site não for servido por HTTPS, e nesse caso o login não funciona como esperado. |
 | `SWAGGER_ENABLED` | não         | `true` serve `/docs` em produção. Deixe desligado em ambiente público.                          |
+| `SMTP_HOST`       | sim         | Servidor SMTP (Brevo: `smtp-relay.brevo.com`). Sem ele, a API não sobe em produção.             |
+| `SMTP_PORT`       | não         | Padrão `587` (STARTTLS). Com `465`, usa TLS direto.                                             |
+| `SMTP_USER` / `SMTP_SENHA` | sim, no Brevo | Login SMTP e chave SMTP do painel do provedor.                                      |
+| `EMAIL_REMETENTE` | sim         | Ex.: `Fivo <nao-responda@fivo.com.br>`. Precisa ser um remetente verificado no provedor.        |
 
 **Web** (`web/`):
 
@@ -124,7 +128,7 @@ navegador ──HTTPS──▶ web (Next, :3001) ──/api/*──▶ api (Nest
 Cada subprojeto tem seu `Dockerfile` (contexto de build na própria pasta), e o [`docker-compose.yml`](docker-compose.yml) da raiz sobe a stack inteira:
 
 ```bash
-cp .env.docker.example .env      # preencha senha do banco, WEB_URL e admin
+cp .env.docker.example .env      # preencha senha do banco, WEB_URL, admin e SMTP
 docker compose up -d --build
 
 # Só uma vez, ao subir a vitrine numa base que já tinha dados:
@@ -162,7 +166,7 @@ npm run start -- -p 3001     # sem o -p, o `next start` sobe na 3000
 - **`backfill:slugs`.** Dá slug às empresas e campanhas aprovadas antes da feature vitrine-e-selo. Sem ele, essas campanhas não têm página pública nem selo. Pode rodar de novo sem efeito colateral.
 - **Arquivos ficam em disco local.** Se `STORAGE_DIR` não estiver num volume persistente, logos, capas e documentos somem a cada deploy. Inclua o diretório no backup junto com o banco.
 - **Escala horizontal.** Como o storage é local, várias instâncias da API só funcionam com o mesmo volume compartilhado entre elas. Por enquanto, rode uma instância.
-- **E-mail ainda não sai de verdade.** O transporte é o `LogMailer`, e em produção ele não registra nem o token. Recuperação de senha e troca de e-mail não funcionam até haver um transporte real (SMTP ou um provedor) ligado em `api/src/infra/mail/mail.module.ts`.
+- **E-mail.** O envio é por SMTP, testado com o Brevo em mente (plano grátis de 300 e-mails/dia). O domínio do `EMAIL_REMETENTE` precisa estar verificado no provedor, com SPF e DKIM no DNS; sem isso, os e-mails caem no spam ou são recusados. Se o SMTP falhar, os avisos sem segredo (cadastro recebido, aprovado, rejeitado e rejeições de campanha) vão para a fila `email_pendente` e são reenviados com backoff; redefinição de senha e confirmação de e-mail não entram na fila, porque levam token.
 - **O QR Code impresso depende do `WEB_URL`.** O link gravado no selo é `{WEB_URL}/empresa/{slugEmpresa}/{slugCampanha}`. Mudar o domínio depois quebra os selos que já estão nas embalagens, então defina o domínio definitivo antes de liberar os downloads.
 - **HTTPS.** O cookie de sessão é `Secure` e `SameSite=Lax`. Sirva o web por HTTPS e mantenha web e API na mesma origem pelo proxy, sem CORS.
 - **Admin.** O seed só cria o admin se o e-mail ainda não existir. Trocar `ADMIN_SENHA` depois não altera a senha de um admin já criado.
