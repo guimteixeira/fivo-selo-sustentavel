@@ -1554,8 +1554,8 @@ Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-
 **Tests**: component
 **Gate**: web
 **Done when**:
-- [ ] W8b (rolar para a 1ª campanha) e W13 (página sem `slugCampanha`) morrem
-- [ ] Gate `web` passa
+- [x] W8b (rolar para a 1ª campanha) e W13 (página sem `slugCampanha`) morrem
+- [x] Gate `web` passa
 
 **Commit**: `test(web): rolagem até a campanha do QR`
 
