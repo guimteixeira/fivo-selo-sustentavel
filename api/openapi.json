@@ -4257,6 +4257,171 @@
         ]
       }
     },
+    "/empresas/publicas/{slug}": {
+      "get": {
+        "operationId": "EmpresasPublicasController_buscar",
+        "parameters": [
+          {
+            "description": "Slug permanente da empresa, atribuído na primeira aprovação",
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "campanhas": {
+                      "description": "Só APROVADA, da aprovação mais recente para a mais antiga",
+                      "items": {
+                        "properties": {
+                          "beneficiada": {
+                            "properties": {
+                              "nome": {
+                                "type": "string"
+                              },
+                              "tipo": {
+                                "enum": [
+                                  "INSTITUICAO",
+                                  "CAUSA"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "tipo",
+                              "nome"
+                            ],
+                            "type": "object"
+                          },
+                          "descricao": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "nome": {
+                            "type": "string"
+                          },
+                          "regraDoacao": {
+                            "properties": {
+                              "percentual": {
+                                "description": "String decimal (`\"1.50\"`)",
+                                "type": "string"
+                              },
+                              "tipo": {
+                                "enum": [
+                                  "POR_UNIDADE",
+                                  "PERCENTUAL"
+                                ],
+                                "type": "string"
+                              },
+                              "valor": {
+                                "description": "String decimal (`\"1.50\"`)",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "tipo"
+                            ],
+                            "type": "object"
+                          },
+                          "situacao": {
+                            "enum": [
+                              "NAO_INICIADA",
+                              "EM_ANDAMENTO"
+                            ],
+                            "type": "string"
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "vigencia": {
+                            "properties": {
+                              "fim": {
+                                "format": "date",
+                                "type": "string"
+                              },
+                              "inicio": {
+                                "format": "date",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "inicio"
+                            ],
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "slug",
+                          "nome",
+                          "descricao",
+                          "beneficiada",
+                          "regraDoacao",
+                          "vigencia",
+                          "situacao"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "cidade": {
+                      "type": "string"
+                    },
+                    "nomeFantasia": {
+                      "type": "string"
+                    },
+                    "site": {
+                      "type": "string"
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "temLogo": {
+                      "description": "Bytes em `GET /empresas/publicas/{slug}/logo` quando `true`",
+                      "type": "boolean"
+                    },
+                    "uf": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "slug",
+                    "nomeFantasia",
+                    "cidade",
+                    "uf",
+                    "site",
+                    "temLogo",
+                    "campanhas"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Dados públicos da empresa (sem CNPJ, contato ou endereço)"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Empresa não encontrada: slug inexistente ou empresa fora de APROVADA (mesmo corpo nos dois casos)"
+          }
+        },
+        "summary": "Página pública da empresa aprovada com as campanhas aprovadas, sem autenticação",
+        "tags": [
+          "empresas"
+        ]
+      }
+    },
     "/instituicoes": {
       "post": {
         "operationId": "CadastroInstituicaoController_criar",

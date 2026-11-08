@@ -923,10 +923,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] 200 sem sessão com o contrato; campanha não aprovada fora
-- [ ] Corpo sem `razaoSocial`, `cnpj`, `telefone`, `logradouro`, `numero`, `complemento`, `bairro`, `cep`, `contato`, e-mail e ids internos
-- [ ] Slug inexistente e empresa suspensa → 404 com corpos idênticos
-- [ ] Gate `full` passa
+- [x] 200 sem sessão com o contrato; campanha não aprovada fora
+- [x] Corpo sem `razaoSocial`, `cnpj`, `telefone`, `logradouro`, `numero`, `complemento`, `bairro`, `cep`, `contato`, e-mail e ids internos
+- [x] Slug inexistente e empresa suspensa → 404 com corpos idênticos
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full

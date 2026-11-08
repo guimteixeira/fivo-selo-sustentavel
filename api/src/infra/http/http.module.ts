@@ -9,6 +9,7 @@ import { AssegurarBeneficiadaDisponivelUseCase } from '@domain/fivo/catalogo/use
 import { AssegurarEmpresaAprovadaUseCase } from '@domain/fivo/empresas/use-cases/assegurar-empresa-aprovada';
 import { AutenticarUsuarioUseCase } from '@domain/fivo/identidade/use-cases/autenticar-usuario';
 import { BuscarCampanhaPublicaUseCase } from '@domain/fivo/campanhas/use-cases/buscar-campanha-publica';
+import { BuscarEmpresaPublicaUseCase } from '@domain/fivo/campanhas/use-cases/buscar-empresa-publica';
 import { ConfirmarTrocaEmailUseCase } from '@domain/fivo/empresas/use-cases/confirmar-troca-email';
 import { ConsultarCampanhaDaEmpresaUseCase } from '@domain/fivo/campanhas/use-cases/consultar-campanha-da-empresa';
 import { CriarCampanhaUseCase } from '@domain/fivo/campanhas/use-cases/criar-campanha';
@@ -125,6 +126,7 @@ import { SenhaController } from './identidade/senha.controller';
     ListarCampanhasDaEmpresaUseCase,
     GerarSeloUseCase,
     ListarParceirosUseCase,
+    BuscarEmpresaPublicaUseCase,
   ],
 })
 export class HttpModule {}
