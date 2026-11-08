@@ -54,6 +54,12 @@ Os scripts `start*` carregam o `.env` via `--env-file`. Referência completa em 
 | `ADMIN_NOME`      | `Administrador Fivo`   | Nome do admin.                                                              |
 | `COOKIE_SECURE`   | `true` em produção     | Liga a flag `Secure` do cookie de sessão.                                   |
 | `SWAGGER_ENABLED` | `false`                | Em produção, serve `/docs` quando `true`. Fora dela, sempre servido.        |
+| `SMTP_HOST`       | —                      | Servidor SMTP. Sem ele, os e-mails só vão para o log; em produção, a app não sobe. |
+| `SMTP_PORT`       | `587`                  | Porta SMTP (`465` liga TLS direto).                                          |
+| `SMTP_USER`       | —                      | Usuário SMTP.                                                                |
+| `SMTP_SENHA`      | —                      | Senha ou chave SMTP.                                                         |
+| `EMAIL_REMETENTE` | —                      | Remetente (`Nome <email>`). Obrigatório quando `SMTP_HOST` está definido.    |
+| `WEB_URL`         | `http://localhost:3001` | Base do web para o QR do selo e os links dos e-mails. Obrigatória em produção. |
 | `PORT`            | `3000`                 | Porta HTTP.                                                                 |
 
 ## Scripts
@@ -169,7 +175,7 @@ Em campanha `APROVADA`, nome, descrição, meta e capa mudam na hora. Beneficiad
 
 A **consulta pública** pelo `idPublico` responde só a campanha `APROVADA` de empresa `APROVADA`, com os valores aprovados e a situação (`NAO_INICIADA` ou `EM_ANDAMENTO`). Rascunho, análise, rejeição, empresa suspensa e identificador malformado recebem o mesmo 404. A capa só é servida nas mesmas condições.
 
-E-mails ainda não são enviados de verdade: o transporte atual é o `LogMailer`, que escreve a mensagem no log da API. Tokens de recuperação de senha e troca de e-mail aparecem lá durante o desenvolvimento.
+E-mails saem por SMTP quando `SMTP_HOST` está definido (`SmtpMailer`, em `src/infra/mail/`); os assuntos e textos de cada template ficam em `templates-email.ts`. Sem `SMTP_HOST`, fora de produção, o transporte é o `LogMailer`, que escreve o destinatário e o template no log e, para a redefinição de senha, o link com o token. Nos testes é sempre o `LogMailer`, mesmo com `SMTP_*` no `.env`.
 
 ## Testes
 
