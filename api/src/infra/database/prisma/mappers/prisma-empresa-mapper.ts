@@ -6,6 +6,7 @@ import {
 
 import { UniqueEntityId } from '@core/types/entities/unique-entity-id';
 import { Cnpj } from '@domain/fivo/shared/entities/cnpj';
+import { Slug } from '@domain/fivo/shared/entities/slug';
 import { Empresa, EmpresaStatus } from '@domain/fivo/empresas/entities/empresa';
 
 const STATUS_PARA_PRISMA: Record<EmpresaStatus, EmpresaStatusPrisma> = {
@@ -69,6 +70,7 @@ export class PrismaEmpresaMapper {
         logoArquivoId: raw.logoArquivoId
           ? new UniqueEntityId(raw.logoArquivoId)
           : null,
+        slug: raw.slug ? Slug.reconstruir(raw.slug) : null,
         createdAt: raw.criadoEm,
         updatedAt: raw.atualizadoEm,
       },
@@ -101,6 +103,8 @@ export class PrismaEmpresaMapper {
       emailPendente: empresa.emailPendente ?? null,
       tokenTrocaEmailHash: empresa.tokenTrocaEmailHash ?? null,
       tokenTrocaEmailExpiraEm: empresa.tokenTrocaEmailExpiraEm ?? null,
+      // `undefined` deixa a coluna como está: o slug nunca volta a nulo.
+      slug: empresa.slug?.valor,
       criadoEm: empresa.createdAt,
       atualizadoEm: empresa.updatedAt ?? null,
     };

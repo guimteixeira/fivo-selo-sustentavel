@@ -733,11 +733,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Ida e volta do slug; `findBySlug` acha e devolve nulo para inexistente
-- [ ] `listarSlugsComPrefixo('cafe')` devolve todos os slugs que começam com `cafe` (`cafe`, `cafe-2`, `cafeteria`); o filtro exato fica em `proximoSlugLivre`
-- [ ] Slug repetido em outra empresa → `SlugEmUsoError`, transição não gravada
-- [ ] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem)
-- [ ] Gate `full` passa
+- [x] Ida e volta do slug; `findBySlug` acha e devolve nulo para inexistente
+- [x] `listarSlugsComPrefixo('cafe')` devolve todos os slugs que começam com `cafe` (`cafe`, `cafe-2`, `cafeteria`); o filtro exato fica em `proximoSlugLivre`
+- [x] Slug repetido em outra empresa → `SlugEmUsoError`, transição não gravada
+- [x] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem) — os stubs da T20 saíram; as 34 falhas restantes são do stub da T21
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full

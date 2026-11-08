@@ -2,13 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
 import { EmpresaJaExisteError } from '@domain/fivo/empresas/errors/empresa-ja-existe.error';
+import { SlugEmUsoError } from '@domain/fivo/shared/errors/slug.errors';
 import {
   EmpresaRepository,
   OrdenacaoListaEmpresa,
 } from '@domain/fivo/empresas/ports/empresa-repository';
 import { Empresa } from '@domain/fivo/empresas/entities/empresa';
 
-import { ehViolacaoDeUnicidade } from '../erros-prisma';
+import {
+  ehViolacaoDeUnicidade,
+  ehViolacaoDeUnicidadeEm,
+} from '../erros-prisma';
 import {
   PrismaEmpresaMapper,
   statusParaPrisma,
@@ -55,14 +59,21 @@ export class PrismaEmpresaRepository implements EmpresaRepository {
     return empresa ? PrismaEmpresaMapper.toDomain(empresa) : null;
   }
 
-  findBySlug(): Promise<Empresa | null> {
-    // Provisório: implementação real na T20 (depende da coluna da T19).
-    return Promise.reject(new Error('não implementado: T20'));
+  async findBySlug(slug: string): Promise<Empresa | null> {
+    const empresa = await this.prisma.empresa.findUnique({ where: { slug } });
+
+    return empresa ? PrismaEmpresaMapper.toDomain(empresa) : null;
   }
 
-  listarSlugsComPrefixo(): Promise<string[]> {
-    // Provisório: implementação real na T20 (depende da coluna da T19).
-    return Promise.reject(new Error('não implementado: T20'));
+  async listarSlugsComPrefixo(prefixo: string): Promise<string[]> {
+    const empresas = await this.prisma.empresa.findMany({
+      where: { slug: { startsWith: prefixo } },
+      select: { slug: true },
+    });
+
+    return empresas
+      .map((empresa) => empresa.slug)
+      .filter((slug): slug is string => slug !== null);
   }
 
   async listarPorEstado(
@@ -95,8 +106,8 @@ export class PrismaEmpresaRepository implements EmpresaRepository {
 
   async save(empresa: Empresa): Promise<void> {
     try {
-      // Estado e decisão só mudam por `salvarTransicao`: regravá-los aqui, a
-      // partir de uma leitura obsoleta, desfaria a decisão de um admin.
+      // Estado, decisão e slug só mudam por `salvarTransicao`: regravá-los
+      // aqui, a partir de uma leitura obsoleta, desfaria a decisão de um admin.
       const {
         status,
         decididoPor,
@@ -105,9 +116,11 @@ export class PrismaEmpresaRepository implements EmpresaRepository {
         emailPendente,
         tokenTrocaEmailHash,
         tokenTrocaEmailExpiraEm,
+        slug,
         ...cadastrais
       } = PrismaEmpresaMapper.toPrisma(empresa);
       void [
+        slug,
         status,
         decididoPor,
         decididoEm,
@@ -144,14 +157,23 @@ export class PrismaEmpresaRepository implements EmpresaRepository {
     empresa: Empresa,
     estadoEsperado: string,
   ): Promise<boolean> {
-    const { count } = await this.db.empresa.updateMany({
-      where: {
-        id: empresa.id.toString(),
-        status: statusParaPrisma(estadoEsperado),
-      },
-      data: PrismaEmpresaMapper.toPrisma(empresa),
-    });
+    try {
+      const { count } = await this.db.empresa.updateMany({
+        where: {
+          id: empresa.id.toString(),
+          status: statusParaPrisma(estadoEsperado),
+        },
+        data: PrismaEmpresaMapper.toPrisma(empresa),
+      });
 
-    return count === 1;
+      return count === 1;
+    } catch (erro) {
+      // Outra aprovação gravou o mesmo slug primeiro: o caso de uso recalcula.
+      if (ehViolacaoDeUnicidadeEm(erro, 'slug')) {
+        throw new SlugEmUsoError();
+      }
+
+      throw erro;
+    }
   }
 }
