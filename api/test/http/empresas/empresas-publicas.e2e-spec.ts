@@ -13,6 +13,7 @@ import {
 } from '@test/http/campanhas/campanhas-e2e.helper';
 import {
   AppDeTeste,
+  comCookieDeSessao,
   criarAppDeTeste,
   limparBanco,
 } from '@test/helpers/e2e-app';
@@ -329,6 +330,120 @@ describe('Empresas públicas (e2e)', () => {
       expect(suspensa.body).toEqual(NAO_ENCONTRADA);
       expect(inexistente.status).toBe(404);
       expect(inexistente.body).toEqual(NAO_ENCONTRADA);
+    });
+  });
+
+  describe('GET /empresas/publicas/:slug/logo', () => {
+    function pedirLogo(slug: string) {
+      return cenario
+        .api()
+        .get(`/empresas/publicas/${slug}/logo`)
+        .buffer(true)
+        .parse((resposta, pronto) => {
+          const partes: Buffer[] = [];
+          resposta.on('data', (parte: Buffer) => partes.push(parte));
+          resposta.on('end', () => pronto(null, Buffer.concat(partes)));
+        });
+    }
+
+    it('empresa aprovada com logo → 200 com os bytes, o Content-Type do arquivo e nosniff, sem sessão (Página pública AC5)', async () => {
+      const dona = await empresaPublica('Café Serra Verde', 'cafe-serra-verde');
+      const bytes = await comLogo(dona);
+
+      const resposta = await pedirLogo('cafe-serra-verde');
+
+      expect(resposta.status).toBe(200);
+      expect(resposta.headers['content-type']).toBe('image/png');
+      expect(resposta.headers['x-content-type-options']).toBe('nosniff');
+      expect((resposta.body as Buffer).equals(bytes)).toBe(true);
+    });
+
+    it('empresa sem logo, slug inexistente e empresa suspensa com logo → 404 (Página pública AC5)', async () => {
+      await empresaPublica('Sem Logo', 'sem-logo');
+      const suspensa = await empresaPublica(
+        'Suspensa Ltda',
+        'suspensa-ltda',
+        EmpresaStatus.SUSPENSA,
+      );
+      await comLogo(suspensa);
+
+      for (const slug of ['sem-logo', 'nao-existe', 'suspensa-ltda']) {
+        const resposta = await cenario
+          .api()
+          .get(`/empresas/publicas/${slug}/logo`);
+
+        expect([slug, resposta.status]).toEqual([slug, 404]);
+        expect(resposta.body).toEqual({
+          statusCode: 404,
+          message: 'Empresa não encontrada',
+        });
+      }
+    });
+  });
+
+  describe('slug atribuído pela aprovação do admin', () => {
+    it('aprovar "Café Serra Verde" e uma campanha pelo admin → página em /cafe-serra-verde com a campanha; renomear não muda os slugs (Slug AC1, AC2, AC7)', async () => {
+      const tokenAdmin = await cenario.sessaoComPapel(UserRole.ADMIN);
+      const dona = await cenario.criarEmpresa(
+        EmpresaStatus.PENDENTE_APROVACAO,
+        'Café Serra Verde',
+      );
+
+      const aprovacao = await comCookieDeSessao(
+        cenario
+          .api()
+          .post(`/admin/empresas/${dona.empresa.id.toString()}/aprovacao`),
+        tokenAdmin,
+      );
+      expect(aprovacao.status).toBe(204);
+
+      const instituicao = await cenario.criarInstituicao();
+      const campanha = await cenario.criarAprovada(
+        dona.token,
+        tokenAdmin,
+        corpoCompleto(instituicao, { nome: 'Água Limpa' }),
+      );
+
+      const aprovada = await cenario
+        .api()
+        .get('/empresas/publicas/cafe-serra-verde');
+      expect(aprovada.status).toBe(200);
+      expect(aprovada.body).toMatchObject({
+        slug: 'cafe-serra-verde',
+        nomeFantasia: 'Café Serra Verde',
+        campanhas: [{ slug: 'agua-limpa', nome: 'Água Limpa' }],
+      });
+
+      const renomeiaEmpresa = await comCookieDeSessao(
+        cenario
+          .api()
+          .patch('/empresas/me')
+          .field('nomeFantasia', 'Torrefação Serra Verde'),
+        dona.token,
+      );
+      expect(renomeiaEmpresa.status).toBe(200);
+      const renomeiaCampanha = await comCookieDeSessao(
+        cenario
+          .api()
+          .patch(`/campanhas/${campanha.id}`)
+          .send({ nome: 'Água Pura' }),
+        dona.token,
+      );
+      expect(renomeiaCampanha.status).toBe(200);
+
+      const renomeada = await cenario
+        .api()
+        .get('/empresas/publicas/cafe-serra-verde');
+      expect(renomeada.status).toBe(200);
+      expect(renomeada.body).toMatchObject({
+        slug: 'cafe-serra-verde',
+        nomeFantasia: 'Torrefação Serra Verde',
+        campanhas: [{ slug: 'agua-limpa', nome: 'Água Pura' }],
+      });
+      const novoSlug = await cenario
+        .api()
+        .get('/empresas/publicas/torrefacao-serra-verde');
+      expect(novoSlug.status).toBe(404);
     });
   });
 });

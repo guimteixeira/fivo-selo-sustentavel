@@ -4422,6 +4422,65 @@
         ]
       }
     },
+    "/empresas/publicas/{slug}/logo": {
+      "get": {
+        "operationId": "EmpresasPublicasController_logo",
+        "parameters": [
+          {
+            "description": "Slug permanente da empresa, atribuído na primeira aprovação",
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              },
+              "image/png": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Bytes do logo, com o Content-Type do arquivo"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Empresa não encontrada: slug inexistente ou empresa fora de APROVADA (mesmo corpo nos dois casos), ou empresa sem logo"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Storage indisponível no momento."
+          }
+        },
+        "summary": "Logo de uma empresa aprovada, sem autenticação",
+        "tags": [
+          "empresas"
+        ]
+      }
+    },
     "/instituicoes": {
       "post": {
         "operationId": "CadastroInstituicaoController_criar",

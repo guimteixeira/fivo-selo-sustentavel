@@ -1,9 +1,18 @@
-import { Controller, Get, HttpException, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Header,
+  HttpException,
+  Param,
+  StreamableFile,
+} from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ResourceNotFoundError } from '@core/errors/resource-not-found-error';
 import { BuscarEmpresaPublicaUseCase } from '@domain/fivo/campanhas/use-cases/buscar-empresa-publica';
+import { EmpresaRepository } from '@domain/fivo/empresas/ports/empresa-repository';
 import { ListarParceirosUseCase } from '@domain/fivo/empresas/use-cases/listar-parceiros';
+import { ArquivoService } from '@infra/arquivo/arquivo.service';
 import { Public } from '@infra/auth/decorators/public.decorator';
 
 import { desembrulhar } from '../desembrulhar';
@@ -16,6 +25,12 @@ const PARAMETRO_SLUG = {
 
 const NAO_PUBLICADA =
   'Empresa não encontrada: slug inexistente ou empresa fora de APROVADA (mesmo corpo nos dois casos)';
+
+// Mesmo corpo em todo 404 público: não revela se a empresa existe, está
+// suspensa ou só não tem logo.
+const NAO_ENCONTRADA = { statusCode: 404, message: 'Empresa não encontrada' };
+
+const CONTEUDO_BINARIO = { schema: { type: 'string', format: 'binary' } };
 
 const DECIMAL = { type: 'string', description: 'String decimal (`"1.50"`)' };
 
@@ -115,6 +130,8 @@ export class EmpresasPublicasController {
   constructor(
     private readonly listarParceiros: ListarParceirosUseCase,
     private readonly buscarEmpresaPublica: BuscarEmpresaPublicaUseCase,
+    private readonly empresaRepository: EmpresaRepository,
+    private readonly arquivoService: ArquivoService,
   ) {}
 
   @ApiOperation({
@@ -163,12 +180,45 @@ export class EmpresasPublicasController {
       resultado.isLeft() &&
       resultado.value instanceof ResourceNotFoundError
     ) {
-      throw new HttpException(
-        { statusCode: 404, message: 'Empresa não encontrada' },
-        404,
-      );
+      throw new HttpException(NAO_ENCONTRADA, 404);
     }
 
     return desembrulhar(resultado);
+  }
+
+  @ApiOperation({
+    summary: 'Logo de uma empresa aprovada, sem autenticação',
+  })
+  @ApiParam(PARAMETRO_SLUG)
+  @ApiResponse({
+    status: 200,
+    description: 'Bytes do logo, com o Content-Type do arquivo',
+    content: {
+      'image/png': CONTEUDO_BINARIO,
+      'image/jpeg': CONTEUDO_BINARIO,
+    },
+  })
+  @ApiErro(404, `${NAO_PUBLICADA}, ou empresa sem logo`)
+  @ApiErro(503, 'Storage indisponível no momento.')
+  @Public()
+  @Get(':slug/logo')
+  @Header('X-Content-Type-Options', 'nosniff')
+  @Header('Content-Security-Policy', "default-src 'none'; sandbox")
+  async logo(@Param('slug') slug: string): Promise<StreamableFile> {
+    // Só o logo de empresa APROVADA é público (mesma regra da página).
+    const empresa = await this.empresaRepository.findBySlug(slug);
+    const logoId = empresa?.estaAprovada()
+      ? empresa.logoArquivoId?.toString()
+      : undefined;
+    const bytes = logoId ? await this.arquivoService.lerBytes(logoId) : null;
+
+    if (!bytes) {
+      throw new HttpException(NAO_ENCONTRADA, 404);
+    }
+
+    return new StreamableFile(bytes.buffer, {
+      type: bytes.mime,
+      disposition: 'inline',
+    });
   }
 }

@@ -950,10 +950,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] 200 com bytes e `Content-Type` do logo; `X-Content-Type-Options: nosniff`
-- [ ] Empresa sem logo, slug inexistente e empresa suspensa → 404
-- [ ] Aprovar "Café Serra Verde" pelo admin → `GET /empresas/publicas/cafe-serra-verde` 200; renomear e conferir que o slug continua
-- [ ] Gate `build` passa (fim da infra)
+- [x] 200 com bytes e `Content-Type` do logo; `X-Content-Type-Options: nosniff`
+- [x] Empresa sem logo, slug inexistente e empresa suspensa → 404
+- [x] Aprovar "Café Serra Verde" pelo admin → `GET /empresas/publicas/cafe-serra-verde` 200; renomear e conferir que o slug continua
+- [x] Gate `build` passa (fim da infra)
 
 **Tests**: e2e
 **Gate**: build
