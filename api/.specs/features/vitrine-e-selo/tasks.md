@@ -759,11 +759,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Ida e volta do slug; `listarPorEmpresa` só da empresa, `createdAt` desc
-- [ ] Mesmo slug em empresas diferentes é aceito; na mesma empresa → `SlugEmUsoError` e versão não incrementada
-- [ ] e2e existentes do repositório continuam verdes
-- [ ] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem)
-- [ ] Gate `full` passa
+- [x] Ida e volta do slug; `listarPorEmpresa` só da empresa, `createdAt` desc
+- [x] Mesmo slug em empresas diferentes é aceito; na mesma empresa → `SlugEmUsoError` e versão não incrementada
+- [x] e2e existentes do repositório continuam verdes
+- [x] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem)
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full

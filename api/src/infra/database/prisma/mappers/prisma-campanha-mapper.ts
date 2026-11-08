@@ -28,6 +28,7 @@ import {
 } from '@domain/fivo/campanhas/entities/regra-doacao';
 import { ValorMonetario } from '@domain/fivo/campanhas/entities/valor-monetario';
 import { Vigencia } from '@domain/fivo/campanhas/entities/vigencia';
+import { Slug } from '@domain/fivo/shared/entities/slug';
 
 export type CampanhaComAlteracoes = CampanhaPrisma & {
   alteracoes: CampanhaAlteracaoPrisma[];
@@ -241,6 +242,7 @@ export class PrismaCampanhaMapper {
           : null,
         decididoEm: raw.decididoEm,
         motivoUltimaRejeicao: raw.motivoUltimaRejeicao,
+        slug: raw.slug ? Slug.reconstruir(raw.slug) : null,
         alteracaoPendente: pendente
           ? PrismaCampanhaMapper.alteracaoToDomain(pendente, id, {
               beneficiada,
@@ -271,6 +273,8 @@ export class PrismaCampanhaMapper {
       decididoPor: campanha.decididoPor?.toString() ?? null,
       decididoEm: campanha.decididoEm ?? null,
       motivoUltimaRejeicao: campanha.motivoUltimaRejeicao ?? null,
+      // `undefined` deixa a coluna como está: o slug nunca volta a nulo.
+      slug: campanha.slug?.valor,
       versao: campanha.versao,
       criadoEm: campanha.createdAt,
       atualizadoEm: campanha.updatedAt ?? null,
