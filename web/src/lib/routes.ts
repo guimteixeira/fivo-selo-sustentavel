@@ -9,6 +9,7 @@ export const APP_ROUTES = {
     cadastroInstituicao: '/cadastro-instituicao',
     recuperarSenha: '/recuperar-senha',
     recuperarSenhaRedefinir: '/recuperar-senha/redefinir',
+    confirmarEmail: '/confirmar-email',
     parceiros: '/parceiros',
     erro: '/Erro',
   },
