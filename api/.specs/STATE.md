@@ -211,7 +211,7 @@
   - fora do escopo: a propriedade `CadastroInstituicao.property-envio-valido` falha com a semente 23 já na base (`id` só de espaços).
 - **Lições**: L-035…L-053 registradas como candidatas.
 - **Uncommitted files**: none
-- **Branch**: `fix/vitrine-gate-handoff` (local, não enviada ao remoto)
+- **Branch**: `fix/vitrine-gate-handoff`, enviada ao remoto com a PR #267 aberta contra `homologacao`
 
 ### Handoff — planejamento de `vitrine-e-selo` (2026-10-28)
 
