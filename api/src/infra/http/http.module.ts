@@ -21,6 +21,7 @@ import { EditarDadosEmpresaUseCase } from '@domain/fivo/empresas/use-cases/edita
 import { InativarCausaUseCase } from '@domain/fivo/catalogo/use-cases/inativar-causa';
 import { InativarInstituicaoUseCase } from '@domain/fivo/catalogo/use-cases/inativar-instituicao';
 import { ListarBeneficiadasUseCase } from '@domain/fivo/catalogo/use-cases/listar-beneficiadas';
+import { GerarSeloUseCase } from '@domain/fivo/campanhas/use-cases/gerar-selo';
 import { ListarCampanhasDaEmpresaUseCase } from '@domain/fivo/campanhas/use-cases/listar-campanhas-da-empresa';
 import { ListarCausasAtivasUseCase } from '@domain/fivo/catalogo/use-cases/listar-causas-ativas';
 import { ListarFilaAprovacaoUseCase } from '@domain/fivo/empresas/use-cases/listar-fila-aprovacao';
@@ -41,6 +42,7 @@ import { ArquivoModule } from '@infra/arquivo/arquivo.module';
 import { AuthModule } from '@infra/auth/auth.module';
 import { CryptographyModule } from '@infra/cryptography/cryptography.module';
 import { MailModule } from '@infra/mail/mail.module';
+import { SeloModule } from '@infra/selo/selo.module';
 
 import { AdminCampanhasController } from './campanhas/admin-campanhas.controller';
 import { AdminCausasController } from './catalogo/admin-causas.controller';
@@ -58,7 +60,13 @@ import { DomainExceptionFilter } from './domain-exception.filter';
 import { SenhaController } from './identidade/senha.controller';
 
 @Module({
-  imports: [ArquivoModule, AuthModule, CryptographyModule, MailModule],
+  imports: [
+    ArquivoModule,
+    AuthModule,
+    CryptographyModule,
+    MailModule,
+    SeloModule,
+  ],
   controllers: [
     CadastroEmpresaController,
     AutenticacaoController,
@@ -112,6 +120,7 @@ import { SenhaController } from './identidade/senha.controller';
     RejeitarAlteracaoCampanhaUseCase,
     BuscarCampanhaPublicaUseCase,
     ListarCampanhasDaEmpresaUseCase,
+    GerarSeloUseCase,
   ],
 })
 export class HttpModule {}

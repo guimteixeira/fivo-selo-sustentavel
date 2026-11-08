@@ -14,7 +14,11 @@ async function comAmbiente(
   const anterior = {
     NODE_ENV: process.env.NODE_ENV,
     SWAGGER_ENABLED: process.env.SWAGGER_ENABLED,
+    WEB_URL: process.env.WEB_URL,
   };
+
+  // Em produção a app não sobe sem `WEB_URL` (base do QR do selo).
+  process.env.WEB_URL = 'https://fivo.example.com.br';
 
   for (const [chave, valor] of Object.entries(ambiente)) {
     process.env[chave] = valor;

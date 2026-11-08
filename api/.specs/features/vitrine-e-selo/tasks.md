@@ -868,11 +868,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] 200 com os dois cabeçalhos exatos; QR decodificado aponta para `/empresa/{slugEmpresa}/{slugCampanha}`
-- [ ] Campanha em rascunho → 409 "Campanha não está aprovada"
-- [ ] Campanha de outra empresa e id inexistente → 404 "Campanha não encontrada"
-- [ ] ADMIN → 403
-- [ ] Gate `full` passa
+- [x] 200 com os dois cabeçalhos exatos; QR decodificado aponta para `/empresa/{slugEmpresa}/{slugCampanha}`
+- [x] Campanha em rascunho → 409 "Campanha não está aprovada"
+- [x] Campanha de outra empresa e id inexistente → 404 "Campanha não encontrada"
+- [x] ADMIN → 403
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full

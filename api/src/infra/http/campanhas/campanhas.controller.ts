@@ -4,12 +4,14 @@ import {
   ForbiddenException,
   Get,
   HttpCode,
+  HttpException,
   Logger,
   NotFoundException,
   Param,
   Patch,
   Post,
   Put,
+  StreamableFile,
   UnprocessableEntityException,
   UploadedFile,
   UseInterceptors,
@@ -27,11 +29,13 @@ import {
 import { Either } from '@core/either';
 import { CampanhaStatus } from '@domain/fivo/campanhas/entities/campanha';
 import { NotAllowedError } from '@core/errors/not-allowed-error';
+import { ResourceNotFoundError } from '@core/errors/resource-not-found-error';
 import { CamposPendentesError } from '@domain/fivo/campanhas/errors/campos-pendentes.error';
 import { EmpresaRepository } from '@domain/fivo/empresas/ports/empresa-repository';
 import { ConsultarCampanhaDaEmpresaUseCase } from '@domain/fivo/campanhas/use-cases/consultar-campanha-da-empresa';
 import { CriarCampanhaUseCase } from '@domain/fivo/campanhas/use-cases/criar-campanha';
 import { EditarCampanhaUseCase } from '@domain/fivo/campanhas/use-cases/editar-campanha';
+import { GerarSeloUseCase } from '@domain/fivo/campanhas/use-cases/gerar-selo';
 import { ListarCampanhasDaEmpresaUseCase } from '@domain/fivo/campanhas/use-cases/listar-campanhas-da-empresa';
 import { SubmeterCampanhaUseCase } from '@domain/fivo/campanhas/use-cases/submeter-campanha';
 import { TipoArquivo } from '@domain/fivo/shared/entities/arquivo';
@@ -206,6 +210,7 @@ export class CampanhasController {
     private readonly empresaRepository: EmpresaRepository,
     private readonly criarCampanha: CriarCampanhaUseCase,
     private readonly listarCampanhas: ListarCampanhasDaEmpresaUseCase,
+    private readonly gerarSelo: GerarSeloUseCase,
     private readonly consultarCampanha: ConsultarCampanhaDaEmpresaUseCase,
     private readonly editarCampanha: EditarCampanhaUseCase,
     private readonly submeterCampanha: SubmeterCampanhaUseCase,
@@ -296,6 +301,50 @@ export class CampanhasController {
     return this.executar(
       await this.consultarCampanha.execute({ empresaId, campanhaId: id }),
     );
+  }
+
+  @ApiOperation({
+    summary:
+      'Selo da campanha aprovada em SVG (marca Fivo, texto fixo e QR Code da página pública)',
+  })
+  @ApiParam(PARAMETRO_ID)
+  @ApiResponse({
+    status: 200,
+    description:
+      'SVG do selo, com `Content-Disposition: attachment; filename="selo-{slugCampanha}.svg"`',
+    content: { 'image/svg+xml': { schema: { type: 'string' } } },
+  })
+  @ApiErro(404, 'Campanha não encontrada (inclusive de outra empresa)')
+  @ApiErro(409, 'Campanha não está aprovada')
+  @Get(':id/selo')
+  async selo(
+    @Param('id') id: string,
+    @CurrentUser() usuario: UsuarioAutenticado,
+  ): Promise<StreamableFile> {
+    const empresaId = await this.idDaEmpresaDe(usuario);
+    const resultado = await this.gerarSelo.execute({
+      empresaId,
+      campanhaId: id,
+    });
+
+    // O filtro troca toda `ResourceNotFoundError` pela mensagem genérica; a
+    // spec fixa "Campanha não encontrada" nesta rota (Selo AC7).
+    if (
+      resultado.isLeft() &&
+      resultado.value instanceof ResourceNotFoundError
+    ) {
+      throw new HttpException(
+        { statusCode: 404, message: 'Campanha não encontrada' },
+        404,
+      );
+    }
+
+    const { svg, slugCampanha } = this.executar(resultado);
+
+    return new StreamableFile(Buffer.from(svg, 'utf8'), {
+      type: 'image/svg+xml',
+      disposition: `attachment; filename="selo-${slugCampanha}.svg"`,
+    });
   }
 
   @ApiOperation({
