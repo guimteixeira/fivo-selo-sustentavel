@@ -17,9 +17,6 @@ export abstract class CampanhaRepository {
    *   pendente, para liberar a regra de "uma alteração em análise por vez"
    *   quando uma nova alteração é aberta na mesma instância.
    * - `alteracaoPendente`, quando houver, é inserida ou atualizada pelo `id`.
-   * - `slug`, quando houver, é gravado junto com a campanha. O slug é único
-   *   por empresa: se outra campanha da mesma empresa já tiver o mesmo slug,
-   *   lança `SlugEmUsoError` sem gravar nada.
    *
    * As duas gravações são idempotentes pelo `id` da alteração: salvar de novo
    * a mesma instância não duplica histórico. Devolve `false` sem gravar nada
@@ -27,8 +24,6 @@ export abstract class CampanhaRepository {
    * gravou antes).
    */
   abstract salvar(campanha: Campanha, versaoEsperada: number): Promise<boolean>;
-
-  /** Campanhas `EM_ANALISE` e campanhas `APROVADA` com alteração pendente. */
   abstract listarEmAnalise(): Promise<Campanha[]>;
 
   /** Todas as campanhas da empresa, da mais recente para a mais antiga (`createdAt` desc). */
