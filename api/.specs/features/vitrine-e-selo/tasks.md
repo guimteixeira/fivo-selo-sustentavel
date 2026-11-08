@@ -230,12 +230,12 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] "Café Serra Verde" → `cafe-serra-verde`; "  Água & Sabão!! " → `agua-sabao`; "ÇÃO--já" → `cao-ja`
-- [ ] Texto que normaliza para 60 caracteres fica com 60; para 61 fica truncado em 60; truncamento que termina em hífen remove o hífen
-- [ ] "!!!" com padrão `empresa` → `empresa`; com padrão `campanha` → `campanha`
-- [ ] `proximoSlugLivre`: livre → base; base ocupada → `-2`; base e `-2` ocupadas → `-3`; `-2` ocupada e base livre → base
-- [ ] Exportado por `src/domain/fivo/shared/index.ts`
-- [ ] Gate `quick` passa
+- [x] "Café Serra Verde" → `cafe-serra-verde`; "  Água & Sabão!! " → `agua-sabao`; "ÇÃO--já" → `cao-ja`
+- [x] Texto que normaliza para 60 caracteres fica com 60; para 61 fica truncado em 60; truncamento que termina em hífen remove o hífen
+- [x] "!!!" com padrão `empresa` → `empresa`; com padrão `campanha` → `campanha`
+- [x] `proximoSlugLivre`: livre → base; base ocupada → `-2`; base e `-2` ocupadas → `-3`; `-2` ocupada e base livre → base
+- [x] Exportado por `src/domain/fivo/shared/index.ts`
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -258,9 +258,9 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Os dois erros estendem a base de erro de aplicação e têm `status` 409
-- [ ] Exportados por `shared/index.ts`
-- [ ] Gate `quick` passa
+- [x] Os dois erros estendem a base de erro de aplicação e têm `status` 409
+- [x] Exportados por `shared/index.ts`
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -285,12 +285,12 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Empresa nova nasce com `slug` nulo
-- [ ] `atribuirSlug` em empresa sem slug grava o valor
-- [ ] Segunda chamada devolve `SlugJaAtribuidoError` e mantém o slug original
-- [ ] `editar...` de `nomeFantasia`, `suspender` e `reativar` não alteram o slug
-- [ ] Sem setter público de `slug`
-- [ ] Gate `quick` passa
+- [x] Empresa nova nasce com `slug` nulo
+- [x] `atribuirSlug` em empresa sem slug grava o valor
+- [x] Segunda chamada devolve `SlugJaAtribuidoError` e mantém o slug original
+- [x] `editar...` de `nomeFantasia`, `suspender` e `reativar` não alteram o slug
+- [x] Sem setter público de `slug`
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -315,10 +315,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Campanha nova nasce com `slug` nulo
-- [ ] `atribuirSlug` grava; segunda chamada devolve `SlugJaAtribuidoError` e mantém o original
-- [ ] `editarTextos` com nome novo e aprovação de alteração de compromisso não alteram o slug
-- [ ] Gate `quick` passa
+- [x] Campanha nova nasce com `slug` nulo
+- [x] `atribuirSlug` grava; segunda chamada devolve `SlugJaAtribuidoError` e mantém o original
+- [x] `editarTextos` com nome novo e aprovação de alteração de compromisso não alteram o slug
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -341,8 +341,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Assinaturas iguais às de `design.md` §Portas
-- [ ] Gate `quick` passa
+- [x] Assinaturas iguais às de `design.md` §Portas
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -365,8 +365,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Assinatura igual à de `design.md` §Portas
-- [ ] Gate `quick` passa
+- [x] Assinatura igual à de `design.md` §Portas
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -389,8 +389,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Porta exportada pela fatia
-- [ ] Gate `quick` passa
+- [x] Porta exportada pela fatia
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -413,8 +413,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Métodos novos implementados; testes existentes continuam verdes
-- [ ] Gate `quick` passa
+- [x] Métodos novos implementados; testes existentes continuam verdes
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -437,8 +437,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Métodos novos implementados; testes existentes continuam verdes
-- [ ] Gate `quick` passa
+- [x] Métodos novos implementados; testes existentes continuam verdes
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -461,8 +461,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Saída determinística para os mesmos slugs
-- [ ] Gate `quick` passa
+- [x] Saída determinística para os mesmos slugs
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -485,8 +485,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] As duas factories aceitam `slug`
-- [ ] Gate `quick` passa
+- [x] As duas factories aceitam `slug`
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -511,13 +511,13 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Aprovação grava `cafe-serra-verde` para "Café Serra Verde"
-- [ ] Segunda empresa homônima recebe `cafe-serra-verde-2`
-- [ ] Empresa que já tem slug mantém o slug
-- [ ] Conflito forçado uma vez → segunda tentativa grava `-2` e a aprovação devolve sucesso
-- [ ] Conflito nas 3 tentativas → erro relançado e status persistido continua `PENDENTE_APROVACAO`
-- [ ] Testes existentes de aprovação continuam verdes
-- [ ] Gate `quick` passa
+- [x] Aprovação grava `cafe-serra-verde` para "Café Serra Verde"
+- [x] Segunda empresa homônima recebe `cafe-serra-verde-2`
+- [x] Empresa que já tem slug mantém o slug
+- [x] Conflito forçado uma vez → segunda tentativa grava `-2` e a aprovação devolve sucesso
+- [x] Conflito nas 3 tentativas → erro relançado e status persistido continua `PENDENTE_APROVACAO`
+- [x] Testes existentes de aprovação continuam verdes
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -542,11 +542,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Aprovação grava o slug do nome
-- [ ] Campanha homônima da mesma empresa recebe `-2`; de outra empresa recebe o slug sem sufixo
-- [ ] Conflito forçado uma vez → sucesso com `-2`; 3 conflitos → erro relançado e status persistido continua `EM_ANALISE`
-- [ ] `AprovarAlteracaoCampanhaUseCase` não altera o slug (teste no spec dele)
-- [ ] Gate `quick` passa
+- [x] Aprovação grava o slug do nome
+- [x] Campanha homônima da mesma empresa recebe `-2`; de outra empresa recebe o slug sem sufixo
+- [x] Conflito forçado uma vez → sucesso com `-2`; 3 conflitos → erro relançado e status persistido continua `EM_ANALISE`
+- [x] `AprovarAlteracaoCampanhaUseCase` não altera o slug (teste no spec dele)
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -571,11 +571,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Devolve só campanhas da empresa, mais recente primeiro
-- [ ] `regraDoacao` nula quando não definida; `POR_UNIDADE` com `valor`, `PERCENTUAL` com `percentual`
-- [ ] Empresa inexistente → `ResourceNotFoundError` com mensagem "Empresa não encontrada"
-- [ ] Empresa sem campanhas → lista vazia
-- [ ] Gate `quick` passa
+- [x] Devolve só campanhas da empresa, mais recente primeiro
+- [x] `regraDoacao` nula quando não definida; `POR_UNIDADE` com `valor`, `PERCENTUAL` com `percentual`
+- [x] Empresa inexistente → `ResourceNotFoundError` com mensagem "Empresa não encontrada"
+- [x] Empresa sem campanhas → lista vazia
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -600,11 +600,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Campanha `APROVADA` da empresa → SVG do renderizador com os dois slugs
-- [ ] Duas chamadas → SVG idêntico
-- [ ] `RASCUNHO`, `EM_ANALISE` e `REJEITADA` → `CampanhaNaoAprovadaError` com a mensagem literal (um teste por estado); renderizador não chamado
-- [ ] Campanha inexistente e campanha de outra empresa → `ResourceNotFoundError("Campanha não encontrada")`
-- [ ] Gate `quick` passa
+- [x] Campanha `APROVADA` da empresa → SVG do renderizador com os dois slugs
+- [x] Duas chamadas → SVG idêntico
+- [x] `RASCUNHO`, `EM_ANALISE` e `REJEITADA` → `CampanhaNaoAprovadaError` com a mensagem literal (um teste por estado); renderizador não chamado
+- [x] Campanha inexistente e campanha de outra empresa → `ResourceNotFoundError("Campanha não encontrada")`
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -627,9 +627,9 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] `buscar-campanha-publica.spec.ts` continua verde sem alteração
-- [ ] Teste unit da função nova cobre `NAO_INICIADA` (início amanhã) e `EM_ANDAMENTO` (início hoje)
-- [ ] Gate `quick` passa
+- [x] `buscar-campanha-publica.spec.ts` continua verde sem alteração
+- [x] Teste unit da função nova cobre `NAO_INICIADA` (início amanhã) e `EM_ANDAMENTO` (início hoje)
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -654,12 +654,12 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Empresa `APROVADA` → campos do contrato, nenhum outro (o teste compara as chaves exatas do objeto)
-- [ ] Campanhas em `RASCUNHO`, `EM_ANALISE`, `REJEITADA` e campanha `APROVADA` sem slug ficam fora
-- [ ] Ordem por aprovação, mais recente primeiro
-- [ ] Campanha com alteração pendente expõe o compromisso aprovado vigente
-- [ ] Slug inexistente, empresa `PENDENTE_APROVACAO`, `REJEITADA` e `SUSPENSA` → `ResourceNotFoundError("Empresa não encontrada")` (um teste por caso)
-- [ ] Gate `quick` passa
+- [x] Empresa `APROVADA` → campos do contrato, nenhum outro (o teste compara as chaves exatas do objeto)
+- [x] Campanhas em `RASCUNHO`, `EM_ANALISE`, `REJEITADA` e campanha `APROVADA` sem slug ficam fora
+- [x] Ordem por aprovação, mais recente primeiro
+- [x] Campanha com alteração pendente expõe o compromisso aprovado vigente
+- [x] Slug inexistente, empresa `PENDENTE_APROVACAO`, `REJEITADA` e `SUSPENSA` → `ResourceNotFoundError("Empresa não encontrada")` (um teste por caso)
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -684,11 +684,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Só empresas `APROVADA` (um teste com uma de cada outro estado)
-- [ ] "água", "Abelha", "Zebu" → ordem "Abelha", "água", "Zebu"
-- [ ] Empresa aprovada sem slug fica fora
-- [ ] Nenhuma empresa → lista vazia
-- [ ] Gate `build` passa (fim do domínio)
+- [x] Só empresas `APROVADA` (um teste com uma de cada outro estado)
+- [x] "água", "Abelha", "Zebu" → ordem "Abelha", "água", "Zebu"
+- [x] Empresa aprovada sem slug fica fora
+- [x] Nenhuma empresa → lista vazia
+- [x] Gate `build` passa (fim do domínio)
 
 **Tests**: unit
 **Gate**: build
@@ -976,9 +976,9 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Teste confere URL, método e mapeamento de 200; 403/404/409 viram `ApiError` com o `status`
-- [ ] `baixarSelo` lê o nome de `Content-Disposition`
-- [ ] Gate `web` passa
+- [x] Teste confere URL, método e mapeamento de 200; 403/404/409 viram `ApiError` com o `status`
+- [x] `baixarSelo` lê o nome de `Content-Disposition`
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -1001,9 +1001,9 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] `{ POR_UNIDADE, "1.00" }` → "R$ 1,00 por unidade vendida"; `{ PERCENTUAL, "2.50" }` → "2,5% de cada venda"; `null` → "Regra de doação não definida"
-- [ ] Os 4 rótulos de status literais
-- [ ] Gate `web` passa
+- [x] `{ POR_UNIDADE, "1.00" }` → "R$ 1,00 por unidade vendida"; `{ PERCENTUAL, "2.50" }` → "2,5% de cada venda"; `null` → "Regra de doação não definida"
+- [x] Os 4 rótulos de status literais
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -1028,11 +1028,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Um card por campanha com os textos de T30
-- [ ] Botões só na `APROVADA`; "Ver página pública" com `href` = `urlPublica`; "Baixar selo" chama `baixarSelo` e dispara download com `selo-{slug}.svg`
-- [ ] Lista vazia → "Você ainda não tem campanhas." + "Criar campanha"
-- [ ] Sem "valor doado" nem "QR gerado · comprovante"
-- [ ] Gate `web` passa
+- [x] Um card por campanha com os textos de T30
+- [x] Botões só na `APROVADA`; "Ver página pública" com `href` = `urlPublica`; "Baixar selo" chama `baixarSelo` e dispara download com `selo-{slug}.svg`
+- [x] Lista vazia → "Você ainda não tem campanhas." + "Criar campanha"
+- [x] Sem "valor doado" nem "QR gerado · comprovante"
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1055,8 +1055,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Teste confere URL e mapeamento de 200; 404 vira `ApiError` 404
-- [ ] Gate `web` passa
+- [x] Teste confere URL e mapeamento de 200; 404 vira `ApiError` 404
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -1081,13 +1081,13 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Card com logo, `nomeFantasia`, cidade/UF e link do `site`
-- [ ] Subtópico com nome, descrição, beneficiada, valor e vigência; "Campanha ainda não iniciada" quando `NAO_INICIADA`
-- [ ] Sem campanhas → "Nenhuma campanha publicada até o momento"
-- [ ] `temLogo` falso ou erro de imagem → iniciais
-- [ ] 404 → "Empresa não encontrada" com link para `/parceiros`
-- [ ] Aviso literal da Fivo Lab presente
-- [ ] Gate `web` passa
+- [x] Card com logo, `nomeFantasia`, cidade/UF e link do `site`
+- [x] Subtópico com nome, descrição, beneficiada, valor e vigência; "Campanha ainda não iniciada" quando `NAO_INICIADA`
+- [x] Sem campanhas → "Nenhuma campanha publicada até o momento"
+- [x] `temLogo` falso ou erro de imagem → iniciais
+- [x] 404 → "Empresa não encontrada" com link para `/parceiros`
+- [x] Aviso literal da Fivo Lab presente
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1112,11 +1112,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Abrir com slug de campanha existente chama `scrollIntoView` no subtópico certo
-- [ ] Slug de campanha inexistente → página no topo, sem erro
-- [ ] `isPublicRoute('/empresa/x/y')` verdadeiro
-- [ ] `app/parceiros/[id]` removido e links que apontavam para ele trocados
-- [ ] Gate `web` passa
+- [x] Abrir com slug de campanha existente chama `scrollIntoView` no subtópico certo
+- [x] Slug de campanha inexistente → página no topo, sem erro
+- [x] `isPublicRoute('/empresa/x/y')` verdadeiro
+- [x] `app/parceiros/[id]` removido e links que apontavam para ele trocados
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1139,8 +1139,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Teste confere URL, método e corpo; 404 e 409 viram `ApiError`
-- [ ] Gate `web` passa
+- [x] Teste confere URL, método e corpo; 404 e 409 viram `ApiError`
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -1165,12 +1165,12 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Um teste por status com os elementos esperados e ausentes
-- [ ] `REJEITADA` mostra "Motivo da rejeição" e o texto
-- [ ] `EM_ANALISE` mostra "Campanha em análise pela Fivo Lab."
-- [ ] "Enviar para análise" chama `POST /campanhas/{id}/submissao`
-- [ ] 404 → "Campanha não encontrada" com link para `/campanhas`
-- [ ] Gate `web` passa
+- [x] Um teste por status com os elementos esperados e ausentes
+- [x] `REJEITADA` mostra "Motivo da rejeição" e o texto
+- [x] `EM_ANALISE` mostra "Campanha em análise pela Fivo Lab."
+- [x] "Enviar para análise" chama `POST /campanhas/{id}/submissao`
+- [x] 404 → "Campanha não encontrada" com link para `/campanhas`
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1193,8 +1193,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Teste confere URL, método e corpo de cada função; capa vai como `multipart/form-data` no campo `capa`
-- [ ] Gate `web` passa
+- [x] Teste confere URL, método e corpo de cada função; capa vai como `multipart/form-data` no campo `capa`
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -1219,10 +1219,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Rotas e itens de menu removidos; `APP_ROUTES.private` sem `selos` e `comprovantes`
-- [ ] Remoção dos dois testes condicionais registrada na mensagem de commit, com o motivo
-- [ ] Teste de menu confere a ausência dos dois itens
-- [ ] Gate `web` passa
+- [x] Rotas e itens de menu removidos; `APP_ROUTES.private` sem `selos` e `comprovantes`
+- [x] Remoção dos dois testes condicionais registrada na mensagem de commit, com o motivo
+- [x] Teste de menu confere a ausência dos dois itens
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1247,9 +1247,9 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Um card por empresa com logo, nome e cidade/UF, `href` = `/empresa/{slug}`
-- [ ] Lista vazia → "Nenhuma empresa parceira ainda." com link para `/cadastro`
-- [ ] Gate `web` passa
+- [x] Um card por empresa com logo, nome e cidade/UF, `href` = `/empresa/{slug}`
+- [x] Lista vazia → "Nenhuma empresa parceira ainda." com link para `/cadastro`
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1272,9 +1272,9 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Seção mostra as empresas da API com link para `/empresa/{slug}`
-- [ ] Teste estrutural: nenhum arquivo importa `mockPartners`
-- [ ] Gate `web` passa
+- [x] Seção mostra as empresas da API com link para `/empresa/{slug}`
+- [x] Teste estrutural: nenhum arquivo importa `mockPartners`
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1299,12 +1299,12 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] "Salvar rascunho" → `POST /campanhas` com os campos preenchidos e navegação para `/campanhas/{id}`
-- [ ] Com capa → `PUT /campanhas/{id}/capa` depois da criação
-- [ ] "Enviar para análise" → criação + submissão + "Campanha enviada para análise."
-- [ ] Erro da API mostra o texto de `mensagemDeErro` e mantém os campos
-- [ ] Nenhum passo de modelo de selo; `CampaignWizard.tsx` e `StepModeloSelo.tsx` removidos; testes `wizard-*` ajustados ao wizard único, sem perder casos
-- [ ] Gate `web` passa
+- [x] "Salvar rascunho" → `POST /campanhas` com os campos preenchidos e navegação para `/campanhas/{id}`
+- [x] Com capa → `PUT /campanhas/{id}/capa` depois da criação
+- [x] "Enviar para análise" → criação + submissão + "Campanha enviada para análise."
+- [x] Erro da API mostra o texto de `mensagemDeErro` e mantém os campos
+- [x] Nenhum passo de modelo de selo; `CampaignWizard.tsx` e `StepModeloSelo.tsx` removidos; testes `wizard-*` ajustados ao wizard único, sem perder casos
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1327,8 +1327,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Teste confere URL, método e corpo `{ motivo }` de cada função; 409 vira `ApiError`
-- [ ] Gate `web` passa
+- [x] Teste confere URL, método e corpo `{ motivo }` de cada função; 409 vira `ApiError`
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -1353,12 +1353,12 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Itens na ordem da API com "Nova"/"Alteração" e os campos do AC1
-- [ ] Aprovar e rejeitar chamam a rota certa por tipo e retiram o item
-- [ ] Motivo com 19 caracteres → confirmar desabilitado; com 20 → habilitado
-- [ ] 409 mostra a mensagem e recarrega a fila
-- [ ] Fila vazia → "Nenhuma campanha aguardando análise."
-- [ ] Gate `web` passa
+- [x] Itens na ordem da API com "Nova"/"Alteração" e os campos do AC1
+- [x] Aprovar e rejeitar chamam a rota certa por tipo e retiram o item
+- [x] Motivo com 19 caracteres → confirmar desabilitado; com 20 → habilitado
+- [x] 409 mostra a mensagem e recarrega a fila
+- [x] Fila vazia → "Nenhuma campanha aguardando análise."
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1383,8 +1383,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Item "Campanhas" leva a `/admin/campanhas`
-- [ ] Gate `web` passa
+- [x] Item "Campanhas" leva a `/admin/campanhas`
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web

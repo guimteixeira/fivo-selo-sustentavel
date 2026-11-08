@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 53,
+  "next_id": 54,
   "lessons": [
     {
       "id": "L-001",
@@ -898,6 +898,24 @@
       ],
       "created": "2026-11-08T14:39:20Z",
       "last_seen": "2026-11-08T14:39:20Z"
+    },
+    {
+      "id": "L-053",
+      "key": "surviving_mutant::a shared async state component needs the negative retry case too no retry button on a 4xx not only a retry on a 5xx",
+      "text": "A shared async-state component needs the negative retry case too: no retry button on a 4xx, not only a retry on a 5xx",
+      "signal": "surviving_mutant",
+      "scope": "web-tests",
+      "status": "candidate",
+      "features": [
+        "vitrine-e-selo"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation-web.md r3 N2 / web/src/components/ui/AsyncState.tsx:52 (web-tests)"
+      ],
+      "created": "2026-11-08T14:56:20Z",
+      "last_seen": "2026-11-08T14:56:20Z"
     }
   ]
 }

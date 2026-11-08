@@ -306,6 +306,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: validation-web.md r2 X11 / PaginaEmpresaPublica.tsx:61 (web-tests)
 - last seen: 2026-11-08T14:39:20Z
 
+### L-053 - A shared async-state component needs the negative retry case too: no retry button on a 4xx, not only a retry on a 5xx
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `web-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-web.md r3 N2 / web/src/components/ui/AsyncState.tsx:52 (web-tests)
+- last seen: 2026-11-08T14:56:20Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
