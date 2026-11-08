@@ -203,11 +203,11 @@ T43 → T44
 
 ### Phase 3b: Correções do gate de handoff do domínio (🤖, exceção AD-023)
 
-T45, T46, T47, T48, T49 não têm dependência. Origem: `validation-dominio.md`, rodada 1.
+T45, T46, T47, T48, T49, T50, T51 não têm dependência. Origem: `validation-dominio.md`, rodadas 1 (T45–T49) e 2 (T50, T51).
 
 ### Phase 8b: Correções da verificação do `web` (🤖, exceção AD-023)
 
-T60, T61, T62, T63, T64 não têm dependência. Origem: `validation-web.md`, rodada 1. A T65 da verificação (gate `Web` com `next typegen`) foi aplicada direto em §Gate Check Commands.
+T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`, rodadas 1 (T60–T64) e 2 (T66). A T65 da verificação (gate `Web` com `next typegen`) foi aplicada direto em §Gate Check Commands.
 
 ---
 
@@ -736,6 +736,7 @@ T60, T61, T62, T63, T64 não têm dependência. Origem: `validation-web.md`, rod
 - [ ] Ida e volta do slug; `findBySlug` acha e devolve nulo para inexistente
 - [ ] `listarSlugsComPrefixo('cafe')` devolve todos os slugs que começam com `cafe` (`cafe`, `cafe-2`, `cafeteria`); o filtro exato fica em `proximoSlugLivre`
 - [ ] Slug repetido em outra empresa → `SlugEmUsoError`, transição não gravada
+- [ ] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem)
 - [ ] Gate `full` passa
 
 **Tests**: e2e
@@ -761,6 +762,7 @@ T60, T61, T62, T63, T64 não têm dependência. Origem: `validation-web.md`, rod
 - [ ] Ida e volta do slug; `listarPorEmpresa` só da empresa, `createdAt` desc
 - [ ] Mesmo slug em empresas diferentes é aceito; na mesma empresa → `SlugEmUsoError` e versão não incrementada
 - [ ] e2e existentes do repositório continuam verdes
+- [ ] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem)
 - [ ] Gate `full` passa
 
 **Tests**: e2e
@@ -1506,6 +1508,44 @@ Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-
 
 ---
 
+### T50: Beneficiada `CAUSA` na página pública da empresa
+
+**What**: Em `buscar-empresa-publica.spec.ts`, acrescentar um caso com campanha `APROVADA` cuja beneficiada é uma **causa** (`Beneficiada.criar({ causaId })`, causa guardada em `causaRepository` com `nome` conhecido). Conferir `res.value.campanhas[0].beneficiada).toEqual({ tipo: 'CAUSA', nome: '<nome da causa>' })`.
+**Where**: `src/domain/fivo/campanhas/use-cases/buscar-empresa-publica.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-06 (Página AC2)
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [ ] Caso com beneficiada `CAUSA` com `toEqual` exato de `{ tipo: 'CAUSA', nome }`
+- [ ] Mutante N16 (`tipo: 'INSTITUICAO'` fixo em `buscar-empresa-publica.ts:96`) morre
+- [ ] Gate `quick` passa
+
+**Commit**: `test(api): beneficiada causa na página pública da empresa`
+
+---
+
+### T51: Faixa completa de dígitos no slug
+
+**What**: Em `slug.spec.ts`, um caso que cubra os dois extremos da faixa `0-9`, por exemplo "Loja 0 a 9" → `loja-0-a-9`, ou estender o caso atual para "Café 2009 Ltda." → `cafe-2009-ltda`.
+**Where**: `src/domain/fivo/shared/entities/slug.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-01 (Slug AC3)
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [ ] `toBe` exato com `0` e `9` no texto
+- [ ] Mutante N13 (`[^a-z0-8]` em `slug.ts:13`) morre
+- [ ] Gate `quick` passa
+
+**Commit**: `test(api): faixa de dígitos do slug`
+
+---
+
 ### T60: Remover `/parceiros/[id]` e `mockPartners`
 
 **What**: Apagar `web/src/app/parceiros/[id]/page.tsx` (detalhe fictício substituído por `/empresa/{slug}`) e `web/src/lib/mockPartners.ts`. Acrescentar o teste estrutural que a T40 pede: nenhum arquivo de `web/src` importa `mockPartners`.
@@ -1598,6 +1638,29 @@ Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-
 
 ---
 
+### T66: Página pública — vigência sem `fim` e erro que não é 404
+
+**What**: Em `PaginaEmpresaPublica.test.tsx`, acrescentar dois casos:
+
+- (a) Campanha com `vigencia: { inicio: "2026-11-01" }` (sem `fim`, que `design.md:86` declara opcional), conferindo `getByText("Vigência: A partir de 01/11/2026")`.
+- (b) `GET /empresas/publicas/{slug}` respondendo 500, conferindo que "Empresa não encontrada" **não** aparece e que aparece o estado de erro do `AsyncState`, com o botão de nova tentativa. Se der, conferir também que o clique refaz a requisição.
+
+**Where**: `web/tests/component/PaginaEmpresaPublica.test.tsx`
+**Depends on**: None
+**Requirement**: VIT-07 AC6 (vigência) e AC11; Test Coverage Matrix ("estados vazio/erro/carregando")
+**Priority**: Minor
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: component
+**Gate**: web
+**Done when**:
+- [ ] X4 morre (`"A partir de"` → `"Desde"` em `S/components/empresa/PaginaEmpresaPublica.tsx:40` faz algum teste falhar)
+- [ ] X11 morre (`e.status === 404` → `e.status >= 400` em `PaginaEmpresaPublica.tsx:61` faz algum teste falhar)
+- [ ] Gate `web` passa
+
+**Commit**: `test(web): vigência sem fim e erro 5xx na página pública`
+
+---
+
 ## Phase Execution Map
 
 ```
@@ -1612,8 +1675,8 @@ Fase 5: T23 T24 T25 T26 T27 T28
 Fase 6: T29 T30 T31 T35 T36 T38
 Fase 7: T32 T33 T34 T39 T40
 Fase 8: T37 T41 T42 T43 T44
-Fase 3b: T45 T46 T47 T48 T49
-Fase 8b: T60 T61 T62 T63 T64
+Fase 3b: T45 T46 T47 T48 T49 T50 T51
+Fase 8b: T60 T61 T62 T63 T64 T66
 ```
 
 ### Divisão sugerida do `web` entre 6 pessoas

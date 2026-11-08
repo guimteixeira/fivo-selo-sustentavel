@@ -282,6 +282,30 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: validation-dominio.md SP1 / listar-parceiros.ts collator (design)
 - last seen: 2026-11-08T13:38:37Z
 
+### L-049 - Test both ends of every character range in a regex class, not only a value from the middle
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-dominio.md r2 N13 / slug.ts:13 (domain-tests)
+- last seen: 2026-11-08T14:39:20Z
+
+### L-050 - An exact toEqual with a single value of an enum field does not discriminate it; add one case per enum value
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-dominio.md r2 N16 / buscar-empresa-publica.ts:96 (domain-tests)
+- last seen: 2026-11-08T14:39:20Z
+
+### L-051 - When the contract marks a field optional, assert the rendered output of both the present and the absent branch
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `web-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-web.md r2 X4 / PaginaEmpresaPublica.tsx:40 (web-tests)
+- last seen: 2026-11-08T14:39:20Z
+
+### L-052 - A screen that special-cases 404 needs a test with a non-404 error proving it does not fall into the 404 branch
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `web-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-web.md r2 X11 / PaginaEmpresaPublica.tsx:61 (web-tests)
+- last seen: 2026-11-08T14:39:20Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
