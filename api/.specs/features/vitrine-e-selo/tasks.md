@@ -1517,9 +1517,9 @@ Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-
 **Tests**: unit (estrutural)
 **Gate**: web
 **Done when**:
-- [ ] `parceiros/[id]` e `mockPartners.ts` não existem; nenhum link aponta para `/parceiros/{id}`
-- [ ] Teste estrutural varre `web/src/**/*.{ts,tsx}` e falha se algum arquivo importar `mockPartners`
-- [ ] Gate `web` passa
+- [x] `parceiros/[id]` e `mockPartners.ts` não existem; nenhum link aponta para `/parceiros/{id}`
+- [x] Teste estrutural varre `web/src/**/*.{ts,tsx}` e falha se algum arquivo importar `mockPartners`
+- [x] Gate `web` passa
 
 **Commit**: `fix(web): remove detalhe fictício de parceiro`
 
