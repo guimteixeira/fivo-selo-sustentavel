@@ -1496,9 +1496,9 @@ Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-
 **Gate**: quick
 **Done when**:
 
-- [ ] JSDoc de `salvar` cita `slug`, a unicidade por empresa e `SlugEmUsoError`
-- [ ] JSDoc de `listarEmAnalise` de volta
-- [ ] Gate `quick` passa
+- [x] JSDoc de `salvar` cita `slug`, a unicidade por empresa e `SlugEmUsoError`
+- [x] JSDoc de `listarEmAnalise` de volta
+- [x] Gate `quick` passa
 
 **Commit**: `docs(api): contrato de slug na porta de campanha`
 

@@ -22,8 +22,15 @@ export abstract class CampanhaRepository {
    * a mesma instância não duplica histórico. Devolve `false` sem gravar nada
    * quando a versão guardada não é mais a `versaoEsperada` (outra operação
    * gravou antes).
+   *
+   * Grava também o `slug`. O par `(empresaId, slug)` é único: se outra
+   * campanha da mesma empresa já tem o slug, lança `SlugEmUsoError` sem gravar
+   * nada (a versão não é incrementada). Campanhas de empresas diferentes podem
+   * ter o mesmo slug.
    */
   abstract salvar(campanha: Campanha, versaoEsperada: number): Promise<boolean>;
+
+  /** Campanhas `EM_ANALISE` e campanhas `APROVADA` com alteração pendente. */
   abstract listarEmAnalise(): Promise<Campanha[]>;
 
   /** Todas as campanhas da empresa, da mais recente para a mais antiga (`createdAt` desc). */
