@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { ThemeProvider } from "@mui/material/styles";
 
 import theme from "@/theme";
@@ -65,6 +65,62 @@ describe("PaginaEmpresaPublica (T33)", () => {
     expect(screen.getByText("Água Limpa")).toBeInTheDocument();
     expect(screen.getByText(/R\$ 1,00 por unidade vendida/)).toBeInTheDocument();
     expect(container.querySelector("#agua-limpa")).not.toBeNull();
+  });
+
+  it("mostra o logo pela rota pública e o link para o site (AC6)", async () => {
+    mock.responderPara("/empresas/publicas/cafe-serra-verde", {
+      status: 200,
+      body: empresaFixture(),
+    });
+
+    montar();
+
+    const logo = await screen.findByRole("img", { name: "Logo de Café Serra Verde" });
+    expect(logo).toHaveAttribute("src", "/api/empresas/publicas/cafe-serra-verde/logo");
+    expect(screen.getByRole("link", { name: "https://cafeserraverde.com.br" })).toHaveAttribute(
+      "href",
+      "https://cafeserraverde.com.br",
+    );
+  });
+
+  it("mostra descrição, beneficiada pelo nome e período de vigência no subtópico (AC6)", async () => {
+    mock.responderPara("/empresas/publicas/cafe-serra-verde", {
+      status: 200,
+      body: empresaFixture(),
+    });
+
+    montar();
+
+    expect(await screen.findByText("Cada café vendido ajuda.")).toBeInTheDocument();
+    expect(screen.getByText("Beneficiada: Instituto X")).toBeInTheDocument();
+    expect(screen.getByText("Vigência: 01/11/2026 até 31/01/2027")).toBeInTheDocument();
+  });
+
+  it("troca o logo que não carrega pelas iniciais (edge case)", async () => {
+    mock.responderPara("/empresas/publicas/cafe-serra-verde", {
+      status: 200,
+      body: empresaFixture(),
+    });
+
+    montar();
+
+    const logo = await screen.findByRole("img", { name: "Logo de Café Serra Verde" });
+    fireEvent.error(logo);
+
+    expect(await screen.findByText("CS")).toBeInTheDocument();
+    expect(screen.queryByRole("img")).toBeNull();
+  });
+
+  it("não marca 'Campanha ainda não iniciada' quando situacao é EM_ANDAMENTO (AC8)", async () => {
+    mock.responderPara("/empresas/publicas/cafe-serra-verde", {
+      status: 200,
+      body: empresaFixture(),
+    });
+
+    montar();
+
+    expect(await screen.findByText("Água Limpa")).toBeInTheDocument();
+    expect(screen.queryByText("Campanha ainda não iniciada")).toBeNull();
   });
 
   it("marca 'Campanha ainda não iniciada' quando situacao é NAO_INICIADA", async () => {

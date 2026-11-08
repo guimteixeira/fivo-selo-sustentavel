@@ -1536,8 +1536,8 @@ Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-
 **Tests**: component
 **Gate**: web
 **Done when**:
-- [ ] W9, W10, W11 e W12 morrem: chip sempre visível, `onError` removido, `href` do site trocado e beneficiada por `tipo` fazem algum teste falhar
-- [ ] Gate `web` passa
+- [x] W9, W10, W11 e W12 morrem: chip sempre visível, `onError` removido, `href` do site trocado e beneficiada por `tipo` fazem algum teste falhar
+- [x] Gate `web` passa
 
 **Commit**: `test(web): card e subtópico da página pública`
 
