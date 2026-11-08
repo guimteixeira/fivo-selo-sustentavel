@@ -1519,9 +1519,9 @@ Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-
 **Gate**: quick
 **Done when**:
 
-- [ ] Caso com beneficiada `CAUSA` com `toEqual` exato de `{ tipo: 'CAUSA', nome }`
-- [ ] Mutante N16 (`tipo: 'INSTITUICAO'` fixo em `buscar-empresa-publica.ts:96`) morre
-- [ ] Gate `quick` passa
+- [x] Caso com beneficiada `CAUSA` com `toEqual` exato de `{ tipo: 'CAUSA', nome }`
+- [x] Mutante N16 (`tipo: 'INSTITUICAO'` fixo em `buscar-empresa-publica.ts:96`) morre
+- [x] Gate `quick` passa
 
 **Commit**: `test(api): beneficiada causa na página pública da empresa`
 

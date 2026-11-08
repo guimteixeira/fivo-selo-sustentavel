@@ -10,6 +10,7 @@ import { DataCalendario } from '../entities/data-calendario';
 import { RegraDoacao, TipoRegraDoacao } from '../entities/regra-doacao';
 import { Vigencia } from '../entities/vigencia';
 import { CampanhaFactory } from '@test/factories/campanha-factory';
+import { CausaFactory } from '@test/factories/causa-factory';
 import { EmpresaFactory } from '@test/factories/empresa-factory';
 import { InstituicaoFactory } from '@test/factories/instituicao-factory';
 import { InMemoryCampanhaRepository } from '@test/doubles/in-memory-campanha-repository';
@@ -262,6 +263,32 @@ describe('BuscarEmpresaPublicaUseCase', () => {
             situacao: 'EM_ANDAMENTO',
           },
         ],
+      });
+    });
+
+    it('names a CAUSA beneficiada by the cause name', async () => {
+      const causa = CausaFactory.create({ nome: 'Água para Todos' });
+      await causaRepository.create(causa);
+      const paraCausa = Beneficiada.criar({ causaId: causa.id.toString() });
+      if (paraCausa.isLeft()) throw paraCausa.value;
+      await campanhaRepository.create(
+        CampanhaFactory.aprovada({
+          empresaId: empresa.id,
+          slug: Slug.reconstruir('agua-para-todos'),
+          decididoEm: new Date('2026-10-10'),
+          beneficiada: paraCausa.value,
+          regraDoacao: regra('1.50'),
+          vigencia: vigencia('2026-10-01'),
+        }),
+      );
+
+      const res = await sut.execute({ slug: 'cafe-serra-verde' });
+
+      expect(res.isRight()).toBe(true);
+      if (res.isLeft()) throw res.value;
+      expect(res.value.campanhas[0].beneficiada).toEqual({
+        tipo: 'CAUSA',
+        nome: 'Água para Todos',
       });
     });
 
