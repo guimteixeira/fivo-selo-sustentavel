@@ -24,6 +24,7 @@ import { ListarBeneficiadasUseCase } from '@domain/fivo/catalogo/use-cases/lista
 import { GerarSeloUseCase } from '@domain/fivo/campanhas/use-cases/gerar-selo';
 import { ListarCampanhasDaEmpresaUseCase } from '@domain/fivo/campanhas/use-cases/listar-campanhas-da-empresa';
 import { ListarCausasAtivasUseCase } from '@domain/fivo/catalogo/use-cases/listar-causas-ativas';
+import { ListarParceirosUseCase } from '@domain/fivo/empresas/use-cases/listar-parceiros';
 import { ListarFilaAprovacaoUseCase } from '@domain/fivo/empresas/use-cases/listar-fila-aprovacao';
 import { ListarFilaCampanhasUseCase } from '@domain/fivo/campanhas/use-cases/listar-fila-campanhas';
 import { ListarFilaInstituicoesUseCase } from '@domain/fivo/catalogo/use-cases/listar-fila-instituicoes';
@@ -56,6 +57,7 @@ import { CadastroInstituicaoController } from './catalogo/cadastro-instituicao.c
 import { CampanhasController } from './campanhas/campanhas.controller';
 import { CampanhasPublicasController } from './campanhas/campanhas-publicas.controller';
 import { CausasController } from './catalogo/causas.controller';
+import { EmpresasPublicasController } from './empresas/empresas-publicas.controller';
 import { DomainExceptionFilter } from './domain-exception.filter';
 import { SenhaController } from './identidade/senha.controller';
 
@@ -81,6 +83,7 @@ import { SenhaController } from './identidade/senha.controller';
     CampanhasController,
     AdminCampanhasController,
     CampanhasPublicasController,
+    EmpresasPublicasController,
   ],
   providers: [
     { provide: APP_FILTER, useClass: DomainExceptionFilter },
@@ -121,6 +124,7 @@ import { SenhaController } from './identidade/senha.controller';
     BuscarCampanhaPublicaUseCase,
     ListarCampanhasDaEmpresaUseCase,
     GerarSeloUseCase,
+    ListarParceirosUseCase,
   ],
 })
 export class HttpModule {}

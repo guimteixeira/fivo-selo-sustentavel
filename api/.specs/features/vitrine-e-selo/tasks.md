@@ -896,10 +896,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] 200 sem sessão, ordem alfabética sem acento, só `APROVADA`
-- [ ] Empresa suspensa sai da lista
-- [ ] Nenhum campo além de `slug`, `nomeFantasia`, `cidade`, `uf`, `temLogo`
-- [ ] Gate `full` passa
+- [x] 200 sem sessão, ordem alfabética sem acento, só `APROVADA`
+- [x] Empresa suspensa sai da lista
+- [x] Nenhum campo além de `slug`, `nomeFantasia`, `cidade`, `uf`, `temLogo`
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full

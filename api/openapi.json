@@ -4207,6 +4207,56 @@
         ]
       }
     },
+    "/empresas/publicas": {
+      "get": {
+        "operationId": "EmpresasPublicasController_listar",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "properties": {
+                      "cidade": {
+                        "type": "string"
+                      },
+                      "nomeFantasia": {
+                        "type": "string"
+                      },
+                      "slug": {
+                        "type": "string"
+                      },
+                      "temLogo": {
+                        "description": "Bytes em `GET /empresas/publicas/{slug}/logo` quando `true`",
+                        "type": "boolean"
+                      },
+                      "uf": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "slug",
+                      "nomeFantasia",
+                      "cidade",
+                      "uf",
+                      "temLogo"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "`nomeFantasia` em ordem alfabética, sem diferenciar caixa nem acento"
+          }
+        },
+        "summary": "Vitrine de parceiros: empresas aprovadas em ordem alfabética, sem autenticação",
+        "tags": [
+          "empresas"
+        ]
+      }
+    },
     "/instituicoes": {
       "post": {
         "operationId": "CadastroInstituicaoController_criar",
