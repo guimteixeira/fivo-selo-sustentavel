@@ -1449,10 +1449,10 @@ T60, T61, T62, T63, T64 não têm dependência. Origem: `validation-web.md`, rod
 **Gate**: quick
 **Done when**:
 
-- [ ] `slug?.valor).toBe('empresa')` no caso de uso de empresa
-- [ ] `slug?.valor).toBe('campanha')` no caso de uso de campanha
-- [ ] Mutantes M14 e M22 morrem
-- [ ] Gate `quick` passa
+- [x] `slug?.valor).toBe('empresa')` no caso de uso de empresa
+- [x] `slug?.valor).toBe('campanha')` no caso de uso de campanha
+- [x] Mutantes M14 e M22 morrem
+- [x] Gate `quick` passa
 
 **Commit**: `test(api): fallback do slug na aprovação`
 
