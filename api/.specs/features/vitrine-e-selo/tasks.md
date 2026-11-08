@@ -1477,9 +1477,9 @@ Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-
 **Gate**: quick
 **Done when**:
 
-- [ ] Os 5 casos acima com asserção no valor exato
-- [ ] Mutantes M52 e M53 morrem
-- [ ] Gate `quick` passa
+- [x] Os 5 casos acima com asserção no valor exato
+- [x] Mutantes M52 e M53 morrem
+- [x] Gate `quick` passa
 
 **Commit**: `test(api): contrato de slug do double de empresa`
 
