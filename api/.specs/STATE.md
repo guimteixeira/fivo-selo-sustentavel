@@ -209,7 +209,7 @@
   - `qrcode` entrou como dependência de produção; `jsqr` e `@resvg/resvg-js`, de dev;
   - a migration `20261108153354_slug` foi gerada por `migrate diff`, porque `migrate dev` não roda sem terminal interativo;
   - backfill: `npm run backfill:slugs`.
-- **Next step**: revisar e enviar `feat/vitrine-infra` para PR contra `homologacao`. Depois, rodar `npm run backfill:slugs` no deploy e o teste ponta a ponta do grupo em 10/11: UAT de 320 px, download real nos navegadores e QR lido por celular a 2,0 cm (`validation-web.md`).
+- **Next step**: revisar e mergear a PR #268. Depois, rodar `npm run backfill:slugs` no deploy e o teste ponta a ponta do grupo em 10/11: UAT de 320 px, download real nos navegadores e QR lido por celular a 2,0 cm (`validation-web.md`).
 - **Follow-ups** (não bloqueiam; detalhes em `validation.md`):
   - e2e de duas aprovações HTTP concorrentes de empresas homônimas;
   - SP-I1: a spec não define a marca Fivo do selo;
@@ -217,7 +217,7 @@
   - o selo é servido sem `nosniff` nem CSP (é `attachment`, risco baixo).
 - **Lições**: L-054 e L-055 registradas como candidatas.
 - **Uncommitted files**: none
-- **Branch**: `feat/vitrine-infra` (local, não enviada ao remoto)
+- **Branch**: `feat/vitrine-infra`, enviada ao remoto com a PR #268 aberta contra `homologacao`
 
 ### Handoff — gate de handoff de `vitrine-e-selo` (2026-11-08)
 
