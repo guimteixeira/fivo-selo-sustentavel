@@ -1407,12 +1407,12 @@ T60, T61, T62, T63, T64 não têm dependência. Origem: `validation-web.md`, rod
 **Gate**: quick
 **Done when**:
 
-- [ ] `toEqual` exato da resposta com todos os valores (empresa + campanha + beneficiada + vigência)
-- [ ] `temLogo` `true` e `false` conferidos
-- [ ] `situacao` `NAO_INICIADA` e `EM_ANDAMENTO` conferidas com relógio fixado
-- [ ] Campanhas fora de `APROVADA` **com slug** ficam fora
-- [ ] Mutantes M36, M37, M38, M39, M40, M41, M46 e M47 morrem
-- [ ] Gate `quick` passa
+- [x] `toEqual` exato da resposta com todos os valores (empresa + campanha + beneficiada + vigência)
+- [x] `temLogo` `true` e `false` conferidos
+- [x] `situacao` `NAO_INICIADA` e `EM_ANDAMENTO` conferidas com relógio fixado
+- [x] Campanhas fora de `APROVADA` **com slug** ficam fora
+- [x] Mutantes M36, M37, M38, M39, M40, M41, M46 e M47 morrem
+- [x] Gate `quick` passa
 
 **Commit**: `test(api): valores do contrato da página pública da empresa`
 

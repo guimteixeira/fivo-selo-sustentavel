@@ -2,7 +2,10 @@ import { ResourceNotFoundError } from '@core/errors/resource-not-found-error';
 import { Beneficiada, InstituicaoStatus } from '@domain/fivo/catalogo';
 import { Empresa, EmpresaStatus } from '@domain/fivo/empresas';
 import { Slug } from '@domain/fivo/shared';
+import { UniqueEntityId } from '@core/types/entities/unique-entity-id';
 import { CampanhaStatus } from '../entities/campanha';
+import { DescricaoCampanha } from '../entities/descricao-campanha';
+import { NomeCampanha } from '../entities/nome-campanha';
 import { DataCalendario } from '../entities/data-calendario';
 import { RegraDoacao, TipoRegraDoacao } from '../entities/regra-doacao';
 import { Vigencia } from '../entities/vigencia';
@@ -20,8 +23,11 @@ function data(texto: string): DataCalendario {
   if (r.isLeft()) throw r.value;
   return r.value;
 }
-function vigencia(inicio: string): Vigencia {
-  const r = Vigencia.criar({ inicio: data(inicio) });
+function vigencia(inicio: string, fim?: string): Vigencia {
+  const r = Vigencia.criar({
+    inicio: data(inicio),
+    ...(fim && { fim: data(fim) }),
+  });
   if (r.isLeft()) throw r.value;
   return r.value;
 }
@@ -125,16 +131,24 @@ describe('BuscarEmpresaPublicaUseCase', () => {
       vigencia: vigencia('2026-10-01'),
     });
     await campanhaRepository.create(semSlug);
+    // com slug: só o status as tira da página
     await campanhaRepository.create(
-      CampanhaFactory.create({ empresaId: empresa.id }),
-    ); // RASCUNHO
+      CampanhaFactory.create({
+        empresaId: empresa.id,
+        slug: Slug.reconstruir('rascunho'),
+      }),
+    );
     await campanhaRepository.create(
-      CampanhaFactory.emAnalise({ empresaId: empresa.id }),
+      CampanhaFactory.emAnalise({
+        empresaId: empresa.id,
+        slug: Slug.reconstruir('em-analise'),
+      }),
     );
     await campanhaRepository.create(
       CampanhaFactory.completa({
         empresaId: empresa.id,
         status: CampanhaStatus.REJEITADA,
+        slug: Slug.reconstruir('rejeitada'),
       }),
     );
 
@@ -176,6 +190,113 @@ describe('BuscarEmpresaPublicaUseCase', () => {
       tipo: TipoRegraDoacao.POR_UNIDADE,
       valor: '1.50',
     });
+  });
+
+  describe('valores do contrato', () => {
+    // 15/10/2026 às 9h em São Paulo
+    const agora = new Date('2026-10-15T12:00:00Z');
+
+    beforeEach(() => {
+      jest.useFakeTimers({
+        now: agora,
+        doNotFake: ['nextTick', 'setImmediate'],
+      });
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('returns every value of the empresa and of the campanha', async () => {
+      const comLogo = EmpresaFactory.create({
+        status: EmpresaStatus.APROVADA,
+        slug: Slug.reconstruir('agua-viva'),
+        nomeFantasia: 'Água Viva',
+        cidade: 'Campinas',
+        uf: 'SP',
+        site: 'https://aguaviva.com.br',
+        logoArquivoId: new UniqueEntityId(),
+      });
+      await empresaRepository.create(comLogo);
+      const inst = InstituicaoFactory.create({
+        status: InstituicaoStatus.APROVADA,
+        nomeFantasia: 'Instituto Mata Viva',
+      });
+      await instituicaoRepository.create(inst);
+
+      const nome = NomeCampanha.criar('Garrafa Solidária');
+      const descricao = DescricaoCampanha.criar('Cada garrafa doa R$ 2,50.');
+      if (nome.isLeft()) throw nome.value;
+      if (descricao.isLeft()) throw descricao.value;
+      await campanhaRepository.create(
+        CampanhaFactory.aprovada({
+          empresaId: comLogo.id,
+          slug: Slug.reconstruir('garrafa-solidaria'),
+          decididoEm: new Date('2026-10-10'),
+          nome: nome.value,
+          descricao: descricao.value,
+          beneficiada: beneficiada(inst.id.toString()),
+          regraDoacao: regra('2.50'),
+          vigencia: vigencia('2026-10-01', '2026-12-31'),
+        }),
+      );
+
+      const res = await sut.execute({ slug: 'agua-viva' });
+
+      expect(res.isRight()).toBe(true);
+      expect(res.value).toEqual({
+        slug: 'agua-viva',
+        nomeFantasia: 'Água Viva',
+        cidade: 'Campinas',
+        uf: 'SP',
+        site: 'https://aguaviva.com.br',
+        temLogo: true,
+        campanhas: [
+          {
+            slug: 'garrafa-solidaria',
+            nome: 'Garrafa Solidária',
+            descricao: 'Cada garrafa doa R$ 2,50.',
+            beneficiada: { tipo: 'INSTITUICAO', nome: 'Instituto Mata Viva' },
+            regraDoacao: { tipo: TipoRegraDoacao.POR_UNIDADE, valor: '2.50' },
+            vigencia: { inicio: '2026-10-01', fim: '2026-12-31' },
+            situacao: 'EM_ANDAMENTO',
+          },
+        ],
+      });
+    });
+
+    it('temLogo is false for an empresa without logo', async () => {
+      const res = await sut.execute({ slug: 'cafe-serra-verde' });
+
+      expect(res.isRight()).toBe(true);
+      if (res.isLeft()) throw res.value;
+      expect(res.value.temLogo).toBe(false);
+    });
+
+    it.each([
+      ['NAO_INICIADA', '2026-10-16'],
+      ['EM_ANDAMENTO', '2026-10-15'],
+    ])(
+      'situacao %s when the vigência starts on %s',
+      async (situacao, inicio) => {
+        await campanhaRepository.create(
+          CampanhaFactory.aprovada({
+            empresaId: empresa.id,
+            slug: Slug.reconstruir('campanha'),
+            decididoEm: new Date('2026-10-10'),
+            beneficiada: beneficiada(instituicaoId),
+            regraDoacao: regra('1.50'),
+            vigencia: vigencia(inicio),
+          }),
+        );
+
+        const res = await sut.execute({ slug: 'cafe-serra-verde' });
+
+        expect(res.isRight()).toBe(true);
+        if (res.isLeft()) throw res.value;
+        expect(res.value.campanhas[0].situacao).toBe(situacao);
+      },
+    );
   });
 
   describe('não encontrada', () => {
