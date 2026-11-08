@@ -294,10 +294,10 @@ describe('Concorrência e autorização de campanhas (e2e)', () => {
       };
     }
 
-    it('as rotas de campanha da empresa e do admin são 5 + 5', async () => {
+    it('as rotas de campanha da empresa e do admin são 7 + 5', async () => {
       const { daEmpresa, doAdmin } = await rotasDeCampanha();
 
-      expect(daEmpresa).toHaveLength(5);
+      expect(daEmpresa).toHaveLength(7);
       expect(doAdmin).toHaveLength(5);
     });
 

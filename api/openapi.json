@@ -2421,6 +2421,117 @@
       }
     },
     "/campanhas": {
+      "get": {
+        "operationId": "CampanhasController_listar",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "nome": {
+                        "type": "string"
+                      },
+                      "regraDoacao": {
+                        "nullable": true,
+                        "properties": {
+                          "percentual": {
+                            "description": "Percentual sobre o preço em string decimal (`\"12.50\"`)",
+                            "type": "string"
+                          },
+                          "tipo": {
+                            "enum": [
+                              "POR_UNIDADE",
+                              "PERCENTUAL"
+                            ],
+                            "type": "string"
+                          },
+                          "valor": {
+                            "description": "R$ por unidade em string decimal (`\"1.50\"`)",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "tipo"
+                        ],
+                        "type": "object"
+                      },
+                      "status": {
+                        "enum": [
+                          "RASCUNHO",
+                          "EM_ANALISE",
+                          "APROVADA",
+                          "REJEITADA"
+                        ],
+                        "type": "string"
+                      },
+                      "urlPublica": {
+                        "description": "`{WEB_URL}/empresa/{slugEmpresa}/{slugCampanha}` (o destino do QR); `null` fora de APROVADA",
+                        "nullable": true,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "nome",
+                      "status",
+                      "regraDoacao",
+                      "urlPublica"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Todas as campanhas da empresa da sessão, e só elas"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Sessão ausente, inválida ou expirada"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Acesso negado"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Empresa não encontrada"
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Campanhas da empresa, da mais recente para a mais antiga",
+        "tags": [
+          "campanhas"
+        ]
+      },
       "post": {
         "operationId": "CampanhasController_criar",
         "parameters": [],
@@ -3391,6 +3502,83 @@
         ]
       }
     },
+    "/campanhas/{id}/selo": {
+      "get": {
+        "operationId": "CampanhasController_selo",
+        "parameters": [
+          {
+            "description": "Id interno da campanha",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "image/svg+xml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "SVG do selo, com `Content-Disposition: attachment; filename=\"selo-{slugCampanha}.svg\"`"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Sessão ausente, inválida ou expirada"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Acesso negado"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Campanha não encontrada (inclusive de outra empresa)"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Campanha não está aprovada"
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Selo da campanha aprovada em SVG (marca Fivo, texto fixo e QR Code da página pública)",
+        "tags": [
+          "campanhas"
+        ]
+      }
+    },
     "/campanhas/{id}/submissao": {
       "post": {
         "operationId": "CampanhasController_submeter",
@@ -4014,6 +4202,280 @@
           }
         },
         "summary": "Confirma a troca de e-mail pelo token do link",
+        "tags": [
+          "empresas"
+        ]
+      }
+    },
+    "/empresas/publicas": {
+      "get": {
+        "operationId": "EmpresasPublicasController_listar",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "properties": {
+                      "cidade": {
+                        "type": "string"
+                      },
+                      "nomeFantasia": {
+                        "type": "string"
+                      },
+                      "slug": {
+                        "type": "string"
+                      },
+                      "temLogo": {
+                        "description": "Bytes em `GET /empresas/publicas/{slug}/logo` quando `true`",
+                        "type": "boolean"
+                      },
+                      "uf": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "slug",
+                      "nomeFantasia",
+                      "cidade",
+                      "uf",
+                      "temLogo"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "`nomeFantasia` em ordem alfabética, sem diferenciar caixa nem acento"
+          }
+        },
+        "summary": "Vitrine de parceiros: empresas aprovadas em ordem alfabética, sem autenticação",
+        "tags": [
+          "empresas"
+        ]
+      }
+    },
+    "/empresas/publicas/{slug}": {
+      "get": {
+        "operationId": "EmpresasPublicasController_buscar",
+        "parameters": [
+          {
+            "description": "Slug permanente da empresa, atribuído na primeira aprovação",
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "campanhas": {
+                      "description": "Só APROVADA, da aprovação mais recente para a mais antiga",
+                      "items": {
+                        "properties": {
+                          "beneficiada": {
+                            "properties": {
+                              "nome": {
+                                "type": "string"
+                              },
+                              "tipo": {
+                                "enum": [
+                                  "INSTITUICAO",
+                                  "CAUSA"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "tipo",
+                              "nome"
+                            ],
+                            "type": "object"
+                          },
+                          "descricao": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "nome": {
+                            "type": "string"
+                          },
+                          "regraDoacao": {
+                            "properties": {
+                              "percentual": {
+                                "description": "String decimal (`\"1.50\"`)",
+                                "type": "string"
+                              },
+                              "tipo": {
+                                "enum": [
+                                  "POR_UNIDADE",
+                                  "PERCENTUAL"
+                                ],
+                                "type": "string"
+                              },
+                              "valor": {
+                                "description": "String decimal (`\"1.50\"`)",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "tipo"
+                            ],
+                            "type": "object"
+                          },
+                          "situacao": {
+                            "enum": [
+                              "NAO_INICIADA",
+                              "EM_ANDAMENTO"
+                            ],
+                            "type": "string"
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "vigencia": {
+                            "properties": {
+                              "fim": {
+                                "format": "date",
+                                "type": "string"
+                              },
+                              "inicio": {
+                                "format": "date",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "inicio"
+                            ],
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "slug",
+                          "nome",
+                          "descricao",
+                          "beneficiada",
+                          "regraDoacao",
+                          "vigencia",
+                          "situacao"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "cidade": {
+                      "type": "string"
+                    },
+                    "nomeFantasia": {
+                      "type": "string"
+                    },
+                    "site": {
+                      "type": "string"
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "temLogo": {
+                      "description": "Bytes em `GET /empresas/publicas/{slug}/logo` quando `true`",
+                      "type": "boolean"
+                    },
+                    "uf": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "slug",
+                    "nomeFantasia",
+                    "cidade",
+                    "uf",
+                    "site",
+                    "temLogo",
+                    "campanhas"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Dados públicos da empresa (sem CNPJ, contato ou endereço)"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Empresa não encontrada: slug inexistente ou empresa fora de APROVADA (mesmo corpo nos dois casos)"
+          }
+        },
+        "summary": "Página pública da empresa aprovada com as campanhas aprovadas, sem autenticação",
+        "tags": [
+          "empresas"
+        ]
+      }
+    },
+    "/empresas/publicas/{slug}/logo": {
+      "get": {
+        "operationId": "EmpresasPublicasController_logo",
+        "parameters": [
+          {
+            "description": "Slug permanente da empresa, atribuído na primeira aprovação",
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              },
+              "image/png": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Bytes do logo, com o Content-Type do arquivo"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Empresa não encontrada: slug inexistente ou empresa fora de APROVADA (mesmo corpo nos dois casos), ou empresa sem logo"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Storage indisponível no momento."
+          }
+        },
+        "summary": "Logo de uma empresa aprovada, sem autenticação",
         "tags": [
           "empresas"
         ]

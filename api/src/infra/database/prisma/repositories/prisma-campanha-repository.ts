@@ -7,6 +7,9 @@ import {
 
 import { CampanhaRepository } from '@domain/fivo/campanhas/ports/campanha-repository';
 import { Campanha } from '@domain/fivo/campanhas/entities/campanha';
+import { SlugEmUsoError } from '@domain/fivo/shared/errors/slug.errors';
+
+import { ehViolacaoDeUnicidadeEm } from '../erros-prisma';
 
 import { PrismaCampanhaMapper } from '../mappers/prisma-campanha-mapper';
 import { PrismaTransactionContext } from '../prisma-transaction-context';
@@ -58,7 +61,22 @@ export class PrismaCampanhaRepository implements CampanhaRepository {
     });
   }
 
-  salvar(campanha: Campanha, versaoEsperada: number): Promise<boolean> {
+  async salvar(campanha: Campanha, versaoEsperada: number): Promise<boolean> {
+    try {
+      return await this.gravar(campanha, versaoEsperada);
+    } catch (erro) {
+      // Outra campanha da mesma empresa ficou com o slug primeiro; a
+      // transação desfez tudo e o caso de uso recalcula. P2002 de outra
+      // coluna segue como está.
+      if (ehViolacaoDeUnicidadeEm(erro, 'slug')) {
+        throw new SlugEmUsoError();
+      }
+
+      throw erro;
+    }
+  }
+
+  private gravar(campanha: Campanha, versaoEsperada: number): Promise<boolean> {
     const { id, ...colunas } = PrismaCampanhaMapper.toPrisma(campanha);
     const decidida = campanha.alteracaoDecidida;
     const pendente = campanha.alteracaoPendente;
@@ -127,9 +145,14 @@ export class PrismaCampanhaRepository implements CampanhaRepository {
     return campanhas.map((campanha) => PrismaCampanhaMapper.toDomain(campanha));
   }
 
-  listarPorEmpresa(): Promise<Campanha[]> {
-    // Provisório: implementação real na T21.
-    return Promise.reject(new Error('não implementado: T21'));
+  async listarPorEmpresa(empresaId: string): Promise<Campanha[]> {
+    const campanhas = await this.prisma.campanha.findMany({
+      where: { empresaId },
+      include: COM_ALTERACAO_PENDENTE,
+      orderBy: { criadoEm: 'desc' },
+    });
+
+    return campanhas.map((campanha) => PrismaCampanhaMapper.toDomain(campanha));
   }
 
   // Reaproveita a transação do `UnitOfWork`, se houver; senão abre uma.

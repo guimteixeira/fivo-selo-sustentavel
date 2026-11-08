@@ -710,8 +710,8 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] `npx prisma migrate dev` gera a migration; `prisma migrate diff` sem drift
-- [ ] Gate `build` passa
+- [x] `npx prisma migrate dev` gera a migration; `prisma migrate diff` sem drift
+- [x] Gate `build` passa
 
 **Tests**: none
 **Gate**: build
@@ -733,11 +733,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Ida e volta do slug; `findBySlug` acha e devolve nulo para inexistente
-- [ ] `listarSlugsComPrefixo('cafe')` devolve todos os slugs que começam com `cafe` (`cafe`, `cafe-2`, `cafeteria`); o filtro exato fica em `proximoSlugLivre`
-- [ ] Slug repetido em outra empresa → `SlugEmUsoError`, transição não gravada
-- [ ] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem)
-- [ ] Gate `full` passa
+- [x] Ida e volta do slug; `findBySlug` acha e devolve nulo para inexistente
+- [x] `listarSlugsComPrefixo('cafe')` devolve todos os slugs que começam com `cafe` (`cafe`, `cafe-2`, `cafeteria`); o filtro exato fica em `proximoSlugLivre`
+- [x] Slug repetido em outra empresa → `SlugEmUsoError`, transição não gravada
+- [x] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem) — os stubs da T20 saíram; as 34 falhas restantes são do stub da T21
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full
@@ -759,11 +759,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Ida e volta do slug; `listarPorEmpresa` só da empresa, `createdAt` desc
-- [ ] Mesmo slug em empresas diferentes é aceito; na mesma empresa → `SlugEmUsoError` e versão não incrementada
-- [ ] e2e existentes do repositório continuam verdes
-- [ ] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem)
-- [ ] Gate `full` passa
+- [x] Ida e volta do slug; `listarPorEmpresa` só da empresa, `createdAt` desc
+- [x] Mesmo slug em empresas diferentes é aceito; na mesma empresa → `SlugEmUsoError` e versão não incrementada
+- [x] e2e existentes do repositório continuam verdes
+- [x] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem)
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full
@@ -785,10 +785,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Duas empresas homônimas aprovadas recebem base e `-2` pela ordem de `decididoEm`
-- [ ] Empresa `PENDENTE_APROVACAO` e campanha `RASCUNHO` ficam sem slug
-- [ ] Segunda execução não muda nada
-- [ ] Gate `full` passa
+- [x] Duas empresas homônimas aprovadas recebem base e `-2` pela ordem de `decididoEm`
+- [x] Empresa `PENDENTE_APROVACAO` e campanha `RASCUNHO` ficam sem slug
+- [x] Segunda execução não muda nada
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full
@@ -812,12 +812,12 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] QR do SVG, rasterizado e decodificado no teste, é exatamente a URL esperada
-- [ ] Nível de correção Q e margem ≥ 4 módulos conferidos no SVG gerado
-- [ ] SVG contém "Selo Sustentável Fivo" e nenhum elemento `<image>`
-- [ ] Duas chamadas com os mesmos slugs → bytes idênticos
-- [ ] Sem `WEB_URL` com `NODE_ENV=production` → erro na construção
-- [ ] Gate `quick` passa
+- [x] QR do SVG, rasterizado e decodificado no teste, é exatamente a URL esperada
+- [x] Nível de correção Q e margem ≥ 4 módulos conferidos no SVG gerado
+- [x] SVG contém "Selo Sustentável Fivo" e nenhum elemento `<image>`
+- [x] Duas chamadas com os mesmos slugs → bytes idênticos
+- [x] Sem `WEB_URL` com `NODE_ENV=production` → erro na construção
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -841,10 +841,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] 200 com só as campanhas da empresa, ordem e campos do contrato
-- [ ] `urlPublica` preenchida na `APROVADA`, `null` nas outras
-- [ ] ADMIN e INSTITUICAO → 403; sem sessão → 401
-- [ ] Gate `full` passa
+- [x] 200 com só as campanhas da empresa, ordem e campos do contrato
+- [x] `urlPublica` preenchida na `APROVADA`, `null` nas outras
+- [x] ADMIN e INSTITUICAO → 403; sem sessão → 401
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full
@@ -868,11 +868,11 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] 200 com os dois cabeçalhos exatos; QR decodificado aponta para `/empresa/{slugEmpresa}/{slugCampanha}`
-- [ ] Campanha em rascunho → 409 "Campanha não está aprovada"
-- [ ] Campanha de outra empresa e id inexistente → 404 "Campanha não encontrada"
-- [ ] ADMIN → 403
-- [ ] Gate `full` passa
+- [x] 200 com os dois cabeçalhos exatos; QR decodificado aponta para `/empresa/{slugEmpresa}/{slugCampanha}`
+- [x] Campanha em rascunho → 409 "Campanha não está aprovada"
+- [x] Campanha de outra empresa e id inexistente → 404 "Campanha não encontrada"
+- [x] ADMIN → 403
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full
@@ -896,10 +896,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] 200 sem sessão, ordem alfabética sem acento, só `APROVADA`
-- [ ] Empresa suspensa sai da lista
-- [ ] Nenhum campo além de `slug`, `nomeFantasia`, `cidade`, `uf`, `temLogo`
-- [ ] Gate `full` passa
+- [x] 200 sem sessão, ordem alfabética sem acento, só `APROVADA`
+- [x] Empresa suspensa sai da lista
+- [x] Nenhum campo além de `slug`, `nomeFantasia`, `cidade`, `uf`, `temLogo`
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full
@@ -923,10 +923,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] 200 sem sessão com o contrato; campanha não aprovada fora
-- [ ] Corpo sem `razaoSocial`, `cnpj`, `telefone`, `logradouro`, `numero`, `complemento`, `bairro`, `cep`, `contato`, e-mail e ids internos
-- [ ] Slug inexistente e empresa suspensa → 404 com corpos idênticos
-- [ ] Gate `full` passa
+- [x] 200 sem sessão com o contrato; campanha não aprovada fora
+- [x] Corpo sem `razaoSocial`, `cnpj`, `telefone`, `logradouro`, `numero`, `complemento`, `bairro`, `cep`, `contato`, e-mail e ids internos
+- [x] Slug inexistente e empresa suspensa → 404 com corpos idênticos
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full
@@ -950,10 +950,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] 200 com bytes e `Content-Type` do logo; `X-Content-Type-Options: nosniff`
-- [ ] Empresa sem logo, slug inexistente e empresa suspensa → 404
-- [ ] Aprovar "Café Serra Verde" pelo admin → `GET /empresas/publicas/cafe-serra-verde` 200; renomear e conferir que o slug continua
-- [ ] Gate `build` passa (fim da infra)
+- [x] 200 com bytes e `Content-Type` do logo; `X-Content-Type-Options: nosniff`
+- [x] Empresa sem logo, slug inexistente e empresa suspensa → 404
+- [x] Aprovar "Café Serra Verde" pelo admin → `GET /empresas/publicas/cafe-serra-verde` 200; renomear e conferir que o slug continua
+- [x] Gate `build` passa (fim da infra)
 
 **Tests**: e2e
 **Gate**: build

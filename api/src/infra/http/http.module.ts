@@ -9,6 +9,7 @@ import { AssegurarBeneficiadaDisponivelUseCase } from '@domain/fivo/catalogo/use
 import { AssegurarEmpresaAprovadaUseCase } from '@domain/fivo/empresas/use-cases/assegurar-empresa-aprovada';
 import { AutenticarUsuarioUseCase } from '@domain/fivo/identidade/use-cases/autenticar-usuario';
 import { BuscarCampanhaPublicaUseCase } from '@domain/fivo/campanhas/use-cases/buscar-campanha-publica';
+import { BuscarEmpresaPublicaUseCase } from '@domain/fivo/campanhas/use-cases/buscar-empresa-publica';
 import { ConfirmarTrocaEmailUseCase } from '@domain/fivo/empresas/use-cases/confirmar-troca-email';
 import { ConsultarCampanhaDaEmpresaUseCase } from '@domain/fivo/campanhas/use-cases/consultar-campanha-da-empresa';
 import { CriarCampanhaUseCase } from '@domain/fivo/campanhas/use-cases/criar-campanha';
@@ -21,7 +22,10 @@ import { EditarDadosEmpresaUseCase } from '@domain/fivo/empresas/use-cases/edita
 import { InativarCausaUseCase } from '@domain/fivo/catalogo/use-cases/inativar-causa';
 import { InativarInstituicaoUseCase } from '@domain/fivo/catalogo/use-cases/inativar-instituicao';
 import { ListarBeneficiadasUseCase } from '@domain/fivo/catalogo/use-cases/listar-beneficiadas';
+import { GerarSeloUseCase } from '@domain/fivo/campanhas/use-cases/gerar-selo';
+import { ListarCampanhasDaEmpresaUseCase } from '@domain/fivo/campanhas/use-cases/listar-campanhas-da-empresa';
 import { ListarCausasAtivasUseCase } from '@domain/fivo/catalogo/use-cases/listar-causas-ativas';
+import { ListarParceirosUseCase } from '@domain/fivo/empresas/use-cases/listar-parceiros';
 import { ListarFilaAprovacaoUseCase } from '@domain/fivo/empresas/use-cases/listar-fila-aprovacao';
 import { ListarFilaCampanhasUseCase } from '@domain/fivo/campanhas/use-cases/listar-fila-campanhas';
 import { ListarFilaInstituicoesUseCase } from '@domain/fivo/catalogo/use-cases/listar-fila-instituicoes';
@@ -40,6 +44,7 @@ import { ArquivoModule } from '@infra/arquivo/arquivo.module';
 import { AuthModule } from '@infra/auth/auth.module';
 import { CryptographyModule } from '@infra/cryptography/cryptography.module';
 import { MailModule } from '@infra/mail/mail.module';
+import { SeloModule } from '@infra/selo/selo.module';
 
 import { AdminCampanhasController } from './campanhas/admin-campanhas.controller';
 import { AdminCausasController } from './catalogo/admin-causas.controller';
@@ -53,11 +58,18 @@ import { CadastroInstituicaoController } from './catalogo/cadastro-instituicao.c
 import { CampanhasController } from './campanhas/campanhas.controller';
 import { CampanhasPublicasController } from './campanhas/campanhas-publicas.controller';
 import { CausasController } from './catalogo/causas.controller';
+import { EmpresasPublicasController } from './empresas/empresas-publicas.controller';
 import { DomainExceptionFilter } from './domain-exception.filter';
 import { SenhaController } from './identidade/senha.controller';
 
 @Module({
-  imports: [ArquivoModule, AuthModule, CryptographyModule, MailModule],
+  imports: [
+    ArquivoModule,
+    AuthModule,
+    CryptographyModule,
+    MailModule,
+    SeloModule,
+  ],
   controllers: [
     CadastroEmpresaController,
     AutenticacaoController,
@@ -72,6 +84,7 @@ import { SenhaController } from './identidade/senha.controller';
     CampanhasController,
     AdminCampanhasController,
     CampanhasPublicasController,
+    EmpresasPublicasController,
   ],
   providers: [
     { provide: APP_FILTER, useClass: DomainExceptionFilter },
@@ -110,6 +123,10 @@ import { SenhaController } from './identidade/senha.controller';
     AprovarAlteracaoCampanhaUseCase,
     RejeitarAlteracaoCampanhaUseCase,
     BuscarCampanhaPublicaUseCase,
+    ListarCampanhasDaEmpresaUseCase,
+    GerarSeloUseCase,
+    ListarParceirosUseCase,
+    BuscarEmpresaPublicaUseCase,
   ],
 })
 export class HttpModule {}

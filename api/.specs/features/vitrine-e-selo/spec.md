@@ -251,18 +251,18 @@ Com cadastro de empresa, catálogo e campanhas prontos no `api`, falta o caminho
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| VIT-01 | P1: Slug permanente de empresa e campanha | Tasks | Implementing |
-| VIT-02 | P1: Campanhas na área da empresa — API | Tasks | Implementing |
-| VIT-03 | P1: Campanhas na área da empresa — `web` | Tasks | Implementing |
-| VIT-04 | P1: Selo genérico com QR Code — API | Tasks | Implementing |
-| VIT-05 | P1: Selo genérico com QR Code — botão no `web` | Tasks | Implementing |
-| VIT-06 | P1: Página pública da empresa — API | Tasks | Implementing |
-| VIT-07 | P1: Página pública da empresa — `web` | Tasks | Implementing |
-| VIT-08 | P1: Vitrine de parceiros — API | Tasks | Implementing |
-| VIT-09 | P1: Vitrine de parceiros — `web` | Tasks | Implementing |
-| VIT-10 | P1: Nova campanha ligada à API — `web` | Tasks | Implementing |
-| VIT-11 | P1: Detalhe e correção de campanha — `web` | Tasks | Implementing |
-| VIT-12 | P1: Fila de campanhas no admin — `web` | Tasks | Implementing |
+| VIT-01 | P1: Slug permanente de empresa e campanha | Tasks | ✅ Verified |
+| VIT-02 | P1: Campanhas na área da empresa — API | Tasks | ✅ Verified |
+| VIT-03 | P1: Campanhas na área da empresa — `web` | Tasks | ✅ Verified |
+| VIT-04 | P1: Selo genérico com QR Code — API | Tasks | ✅ Verified |
+| VIT-05 | P1: Selo genérico com QR Code — botão no `web` | Tasks | ✅ Verified |
+| VIT-06 | P1: Página pública da empresa — API | Tasks | ✅ Verified |
+| VIT-07 | P1: Página pública da empresa — `web` | Tasks | ✅ Verified |
+| VIT-08 | P1: Vitrine de parceiros — API | Tasks | ✅ Verified |
+| VIT-09 | P1: Vitrine de parceiros — `web` | Tasks | ✅ Verified |
+| VIT-10 | P1: Nova campanha ligada à API — `web` | Tasks | ✅ Verified |
+| VIT-11 | P1: Detalhe e correção de campanha — `web` | Tasks | ✅ Verified |
+| VIT-12 | P1: Fila de campanhas no admin — `web` | Tasks | ✅ Verified |
 
 **ID format:** `[CATEGORY]-[NUMBER]`
 

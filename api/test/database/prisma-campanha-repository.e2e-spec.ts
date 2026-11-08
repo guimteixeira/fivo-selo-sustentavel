@@ -29,6 +29,8 @@ import {
 } from '@domain/fivo/campanhas/entities/regra-doacao';
 import { ValorMonetario } from '@domain/fivo/campanhas/entities/valor-monetario';
 import { Vigencia } from '@domain/fivo/campanhas/entities/vigencia';
+import { Slug } from '@domain/fivo/shared/entities/slug';
+import { SlugEmUsoError } from '@domain/fivo/shared/errors/slug.errors';
 import { CampanhaFactory } from '@test/factories/campanha-factory';
 import { CausaFactory } from '@test/factories/causa-factory';
 import { cnpjValido } from '@test/factories/cnpj-factory';
@@ -226,6 +228,7 @@ describe('PrismaCampanhaRepository (e2e)', () => {
           decididoPor: adminId,
           decididoEm: new Date('2026-03-02T13:14:15.678Z'),
           motivoUltimaRejeicao: 'Motivo da rejeição anterior da campanha.',
+          slug: Slug.reconstruir('doe-sorrisos'),
           alteracaoPendente: AlteracaoCompromisso.create({
             campanhaId: id,
             anterior,
@@ -265,6 +268,7 @@ describe('PrismaCampanhaRepository (e2e)', () => {
         decididoPor: adminId.toString(),
         decididoEm: new Date('2026-03-02T13:14:15.678Z'),
         motivoUltimaRejeicao: 'Motivo da rejeição anterior da campanha.',
+        slug: 'doe-sorrisos',
         versao: 3,
         criadoEm: new Date('2026-02-28T01:02:03.004Z'),
         atualizadoEm: new Date('2026-03-05T08:09:10.222Z'),
@@ -312,6 +316,7 @@ describe('PrismaCampanhaRepository (e2e)', () => {
       expect(lida.motivoUltimaRejeicao).toBe(
         'Motivo da rejeição anterior da campanha.',
       );
+      expect(lida.slug?.valor).toBe('doe-sorrisos');
       expect(lida.versao).toBe(3);
       expect(lida.createdAt).toEqual(new Date('2026-02-28T01:02:03.004Z'));
       expect(lida.updatedAt).toEqual(new Date('2026-03-05T08:09:10.222Z'));
@@ -365,6 +370,7 @@ describe('PrismaCampanhaRepository (e2e)', () => {
         decididoPor: null,
         decididoEm: null,
         motivoUltimaRejeicao: null,
+        slug: null,
         versao: 0,
         atualizadoEm: null,
       });
@@ -382,6 +388,7 @@ describe('PrismaCampanhaRepository (e2e)', () => {
       expect(lida.decididoEm).toBeNull();
       expect(lida.motivoUltimaRejeicao).toBeNull();
       expect(lida.alteracaoPendente).toBeNull();
+      expect(lida.slug).toBeNull();
       expect(lida.updatedAt).toBeNull();
     });
 
@@ -827,6 +834,131 @@ describe('PrismaCampanhaRepository (e2e)', () => {
       expect(daFila?.alteracaoPendente?.createdAt).toEqual(
         comPendente.alteracaoPendente!.createdAt,
       );
+    });
+  });
+  describe('slug', () => {
+    async function outraEmpresa(): Promise<UniqueEntityId> {
+      const empresa = EmpresaFactory.create({ cnpj: cnpjValido(2) });
+      await contexto.app.get(EmpresaRepository).create(empresa);
+      return empresa.id;
+    }
+
+    /** Em análise e aprovada em memória com `slug`, pronta para `salvar`. */
+    async function aprovarComSlug(
+      slug: string,
+      dona: UniqueEntityId = empresaId,
+    ): Promise<Campanha> {
+      const campanha = CampanhaFactory.emAnalise({
+        empresaId: dona,
+        beneficiada: daInstituicao(),
+      });
+      await repository.create(campanha);
+      const lida = await carregar(campanha.id);
+      valor(lida.aprovar(new UniqueEntityId()));
+      valor(lida.atribuirSlug(Slug.reconstruir(slug)));
+      return lida;
+    }
+
+    it('salvar grava o slug da aprovação e a leitura o reconstrói', async () => {
+      const campanha = await aprovarComSlug('agua-limpa');
+
+      expect(await repository.salvar(campanha, 0)).toBe(true);
+
+      const linha = await contexto.prisma.campanha.findUniqueOrThrow({
+        where: { id: campanha.id.toString() },
+      });
+      expect(linha.slug).toBe('agua-limpa');
+      expect(linha.status).toBe('APROVADA');
+      expect((await carregar(campanha.id)).slug?.valor).toBe('agua-limpa');
+    });
+
+    it('mesmo slug em empresas diferentes é aceito', async () => {
+      const primeira = await aprovarComSlug('agua-limpa');
+      const segunda = await aprovarComSlug('agua-limpa', await outraEmpresa());
+
+      expect(await repository.salvar(primeira, 0)).toBe(true);
+      expect(await repository.salvar(segunda, 0)).toBe(true);
+
+      expect((await carregar(primeira.id)).slug?.valor).toBe('agua-limpa');
+      expect((await carregar(segunda.id)).slug?.valor).toBe('agua-limpa');
+    });
+
+    it('slug de outra campanha da mesma empresa → SlugEmUsoError e nada gravado, versão intacta', async () => {
+      const primeira = await aprovarComSlug('agua-limpa');
+      expect(await repository.salvar(primeira, 0)).toBe(true);
+      const segunda = await aprovarComSlug('agua-limpa');
+      const antes = await contexto.prisma.campanha.findUniqueOrThrow({
+        where: { id: segunda.id.toString() },
+      });
+
+      const gravacao = repository.salvar(segunda, 0);
+
+      await expect(gravacao).rejects.toBeInstanceOf(SlugEmUsoError);
+      await expect(gravacao).rejects.toThrow('Slug já está em uso');
+      const depois = await contexto.prisma.campanha.findUniqueOrThrow({
+        where: { id: segunda.id.toString() },
+      });
+      expect(depois).toEqual(antes);
+      expect(depois.versao).toBe(0);
+      expect(depois.status).toBe('EM_ANALISE');
+      expect(depois.slug).toBeNull();
+    });
+
+    it('P2002 de outra coluna não vira SlugEmUsoError', async () => {
+      const capaArquivoId = await criarArquivo('IMAGEM_CAMPANHA');
+      await repository.create(
+        aprovada({ capaArquivoId: new UniqueEntityId(capaArquivoId) }),
+      );
+      const outra = aprovada();
+      await repository.create(outra);
+      const lida = await carregar(outra.id);
+      valor(
+        lida.editarTextos({ capaArquivoId: new UniqueEntityId(capaArquivoId) }),
+      );
+
+      const gravacao = repository.salvar(lida, 0);
+
+      await expect(gravacao).rejects.toBeInstanceOf(
+        Prisma.PrismaClientKnownRequestError,
+      );
+      await expect(gravacao).rejects.toMatchObject({ code: 'P2002' });
+    });
+
+    it('listarPorEmpresa traz só as campanhas da empresa, da mais recente para a mais antiga', async () => {
+      const antiga = aprovada({ createdAt: new Date('2026-01-01T10:00:00Z') });
+      const recente = CampanhaFactory.create({
+        empresaId,
+        createdAt: new Date('2026-03-01T10:00:00Z'),
+      });
+      const meio = aprovadaComAlteracao({
+        createdAt: new Date('2026-02-01T10:00:00Z'),
+      });
+      const deOutra = CampanhaFactory.create({
+        empresaId: await outraEmpresa(),
+        createdAt: new Date('2026-04-01T10:00:00Z'),
+      });
+      for (const campanha of [antiga, recente, meio, deOutra]) {
+        await repository.create(campanha);
+      }
+
+      const lista = await repository.listarPorEmpresa(empresaId.toString());
+
+      expect(lista.map((campanha) => campanha.id.toString())).toEqual([
+        recente.id.toString(),
+        meio.id.toString(),
+        antiga.id.toString(),
+      ]);
+      expect(lista[1].alteracaoPendente?.id.toString()).toBe(
+        meio.alteracaoPendente!.id.toString(),
+      );
+    });
+
+    it('listarPorEmpresa de empresa sem campanhas devolve lista vazia', async () => {
+      await repository.create(aprovada());
+
+      expect(
+        await repository.listarPorEmpresa(new UniqueEntityId().toString()),
+      ).toEqual([]);
     });
   });
 });
