@@ -86,7 +86,7 @@ Prazo final: **qua 11/11/2026**.
 | Quick | Tasks de domínio e T23 | `cd api && npx tsc -p tsconfig.json --noEmit && npx eslint "{src,test}/**/*.ts" && npx jest` |
 | Full | Tasks de infra com e2e | `cd api && npx tsc -p tsconfig.json --noEmit && npx eslint "{src,test}/**/*.ts" && npx jest && npx jest --config ./test/jest-e2e.json` |
 | Build | Fim de fase no `api`, schema/config | `cd api && npm run build && npx tsc -p tsconfig.json --noEmit && npx eslint "{src,test}/**/*.ts" && npx jest && npx jest --config ./test/jest-e2e.json` |
-| Web | Toda task do `web` | `cd web && npx tsc --noEmit && npm run lint && npm test` |
+| Web | Toda task do `web` | `cd web && npx next typegen && npx tsc --noEmit && npm run lint && npm test` |
 
 ---
 
@@ -201,6 +201,14 @@ T42 → T43
 T43 → T44
 ```
 
+### Phase 3b: Correções do gate de handoff do domínio (🤖, exceção AD-023)
+
+T45, T46, T47, T48, T49, T50, T51 não têm dependência. Origem: `validation-dominio.md`, rodadas 1 (T45–T49) e 2 (T50, T51).
+
+### Phase 8b: Correções da verificação do `web` (🤖, exceção AD-023)
+
+T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`, rodadas 1 (T60–T64) e 2 (T66). A T65 da verificação (gate `Web` com `next typegen`) foi aplicada direto em §Gate Check Commands.
+
 ---
 
 ## Task Breakdown
@@ -222,12 +230,12 @@ T43 → T44
 
 **Done when**:
 
-- [ ] "Café Serra Verde" → `cafe-serra-verde`; "  Água & Sabão!! " → `agua-sabao`; "ÇÃO--já" → `cao-ja`
-- [ ] Texto que normaliza para 60 caracteres fica com 60; para 61 fica truncado em 60; truncamento que termina em hífen remove o hífen
-- [ ] "!!!" com padrão `empresa` → `empresa`; com padrão `campanha` → `campanha`
-- [ ] `proximoSlugLivre`: livre → base; base ocupada → `-2`; base e `-2` ocupadas → `-3`; `-2` ocupada e base livre → base
-- [ ] Exportado por `src/domain/fivo/shared/index.ts`
-- [ ] Gate `quick` passa
+- [x] "Café Serra Verde" → `cafe-serra-verde`; "  Água & Sabão!! " → `agua-sabao`; "ÇÃO--já" → `cao-ja`
+- [x] Texto que normaliza para 60 caracteres fica com 60; para 61 fica truncado em 60; truncamento que termina em hífen remove o hífen
+- [x] "!!!" com padrão `empresa` → `empresa`; com padrão `campanha` → `campanha`
+- [x] `proximoSlugLivre`: livre → base; base ocupada → `-2`; base e `-2` ocupadas → `-3`; `-2` ocupada e base livre → base
+- [x] Exportado por `src/domain/fivo/shared/index.ts`
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -250,9 +258,9 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Os dois erros estendem a base de erro de aplicação e têm `status` 409
-- [ ] Exportados por `shared/index.ts`
-- [ ] Gate `quick` passa
+- [x] Os dois erros estendem a base de erro de aplicação e têm `status` 409
+- [x] Exportados por `shared/index.ts`
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -277,12 +285,12 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Empresa nova nasce com `slug` nulo
-- [ ] `atribuirSlug` em empresa sem slug grava o valor
-- [ ] Segunda chamada devolve `SlugJaAtribuidoError` e mantém o slug original
-- [ ] `editar...` de `nomeFantasia`, `suspender` e `reativar` não alteram o slug
-- [ ] Sem setter público de `slug`
-- [ ] Gate `quick` passa
+- [x] Empresa nova nasce com `slug` nulo
+- [x] `atribuirSlug` em empresa sem slug grava o valor
+- [x] Segunda chamada devolve `SlugJaAtribuidoError` e mantém o slug original
+- [x] `editar...` de `nomeFantasia`, `suspender` e `reativar` não alteram o slug
+- [x] Sem setter público de `slug`
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -307,10 +315,10 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Campanha nova nasce com `slug` nulo
-- [ ] `atribuirSlug` grava; segunda chamada devolve `SlugJaAtribuidoError` e mantém o original
-- [ ] `editarTextos` com nome novo e aprovação de alteração de compromisso não alteram o slug
-- [ ] Gate `quick` passa
+- [x] Campanha nova nasce com `slug` nulo
+- [x] `atribuirSlug` grava; segunda chamada devolve `SlugJaAtribuidoError` e mantém o original
+- [x] `editarTextos` com nome novo e aprovação de alteração de compromisso não alteram o slug
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -333,8 +341,8 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Assinaturas iguais às de `design.md` §Portas
-- [ ] Gate `quick` passa
+- [x] Assinaturas iguais às de `design.md` §Portas
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -357,8 +365,8 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Assinatura igual à de `design.md` §Portas
-- [ ] Gate `quick` passa
+- [x] Assinatura igual à de `design.md` §Portas
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -381,8 +389,8 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Porta exportada pela fatia
-- [ ] Gate `quick` passa
+- [x] Porta exportada pela fatia
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -405,8 +413,8 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Métodos novos implementados; testes existentes continuam verdes
-- [ ] Gate `quick` passa
+- [x] Métodos novos implementados; testes existentes continuam verdes
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -429,8 +437,8 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Métodos novos implementados; testes existentes continuam verdes
-- [ ] Gate `quick` passa
+- [x] Métodos novos implementados; testes existentes continuam verdes
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -453,8 +461,8 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Saída determinística para os mesmos slugs
-- [ ] Gate `quick` passa
+- [x] Saída determinística para os mesmos slugs
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -477,8 +485,8 @@ T43 → T44
 
 **Done when**:
 
-- [ ] As duas factories aceitam `slug`
-- [ ] Gate `quick` passa
+- [x] As duas factories aceitam `slug`
+- [x] Gate `quick` passa
 
 **Tests**: none
 **Gate**: quick
@@ -503,13 +511,13 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Aprovação grava `cafe-serra-verde` para "Café Serra Verde"
-- [ ] Segunda empresa homônima recebe `cafe-serra-verde-2`
-- [ ] Empresa que já tem slug mantém o slug
-- [ ] Conflito forçado uma vez → segunda tentativa grava `-2` e a aprovação devolve sucesso
-- [ ] Conflito nas 3 tentativas → erro relançado e status persistido continua `PENDENTE_APROVACAO`
-- [ ] Testes existentes de aprovação continuam verdes
-- [ ] Gate `quick` passa
+- [x] Aprovação grava `cafe-serra-verde` para "Café Serra Verde"
+- [x] Segunda empresa homônima recebe `cafe-serra-verde-2`
+- [x] Empresa que já tem slug mantém o slug
+- [x] Conflito forçado uma vez → segunda tentativa grava `-2` e a aprovação devolve sucesso
+- [x] Conflito nas 3 tentativas → erro relançado e status persistido continua `PENDENTE_APROVACAO`
+- [x] Testes existentes de aprovação continuam verdes
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -534,11 +542,11 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Aprovação grava o slug do nome
-- [ ] Campanha homônima da mesma empresa recebe `-2`; de outra empresa recebe o slug sem sufixo
-- [ ] Conflito forçado uma vez → sucesso com `-2`; 3 conflitos → erro relançado e status persistido continua `EM_ANALISE`
-- [ ] `AprovarAlteracaoCampanhaUseCase` não altera o slug (teste no spec dele)
-- [ ] Gate `quick` passa
+- [x] Aprovação grava o slug do nome
+- [x] Campanha homônima da mesma empresa recebe `-2`; de outra empresa recebe o slug sem sufixo
+- [x] Conflito forçado uma vez → sucesso com `-2`; 3 conflitos → erro relançado e status persistido continua `EM_ANALISE`
+- [x] `AprovarAlteracaoCampanhaUseCase` não altera o slug (teste no spec dele)
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -563,11 +571,11 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Devolve só campanhas da empresa, mais recente primeiro
-- [ ] `regraDoacao` nula quando não definida; `POR_UNIDADE` com `valor`, `PERCENTUAL` com `percentual`
-- [ ] Empresa inexistente → `ResourceNotFoundError` com mensagem "Empresa não encontrada"
-- [ ] Empresa sem campanhas → lista vazia
-- [ ] Gate `quick` passa
+- [x] Devolve só campanhas da empresa, mais recente primeiro
+- [x] `regraDoacao` nula quando não definida; `POR_UNIDADE` com `valor`, `PERCENTUAL` com `percentual`
+- [x] Empresa inexistente → `ResourceNotFoundError` com mensagem "Empresa não encontrada"
+- [x] Empresa sem campanhas → lista vazia
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -592,11 +600,11 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Campanha `APROVADA` da empresa → SVG do renderizador com os dois slugs
-- [ ] Duas chamadas → SVG idêntico
-- [ ] `RASCUNHO`, `EM_ANALISE` e `REJEITADA` → `CampanhaNaoAprovadaError` com a mensagem literal (um teste por estado); renderizador não chamado
-- [ ] Campanha inexistente e campanha de outra empresa → `ResourceNotFoundError("Campanha não encontrada")`
-- [ ] Gate `quick` passa
+- [x] Campanha `APROVADA` da empresa → SVG do renderizador com os dois slugs
+- [x] Duas chamadas → SVG idêntico
+- [x] `RASCUNHO`, `EM_ANALISE` e `REJEITADA` → `CampanhaNaoAprovadaError` com a mensagem literal (um teste por estado); renderizador não chamado
+- [x] Campanha inexistente e campanha de outra empresa → `ResourceNotFoundError("Campanha não encontrada")`
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -619,9 +627,9 @@ T43 → T44
 
 **Done when**:
 
-- [ ] `buscar-campanha-publica.spec.ts` continua verde sem alteração
-- [ ] Teste unit da função nova cobre `NAO_INICIADA` (início amanhã) e `EM_ANDAMENTO` (início hoje)
-- [ ] Gate `quick` passa
+- [x] `buscar-campanha-publica.spec.ts` continua verde sem alteração
+- [x] Teste unit da função nova cobre `NAO_INICIADA` (início amanhã) e `EM_ANDAMENTO` (início hoje)
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -646,12 +654,12 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Empresa `APROVADA` → campos do contrato, nenhum outro (o teste compara as chaves exatas do objeto)
-- [ ] Campanhas em `RASCUNHO`, `EM_ANALISE`, `REJEITADA` e campanha `APROVADA` sem slug ficam fora
-- [ ] Ordem por aprovação, mais recente primeiro
-- [ ] Campanha com alteração pendente expõe o compromisso aprovado vigente
-- [ ] Slug inexistente, empresa `PENDENTE_APROVACAO`, `REJEITADA` e `SUSPENSA` → `ResourceNotFoundError("Empresa não encontrada")` (um teste por caso)
-- [ ] Gate `quick` passa
+- [x] Empresa `APROVADA` → campos do contrato, nenhum outro (o teste compara as chaves exatas do objeto)
+- [x] Campanhas em `RASCUNHO`, `EM_ANALISE`, `REJEITADA` e campanha `APROVADA` sem slug ficam fora
+- [x] Ordem por aprovação, mais recente primeiro
+- [x] Campanha com alteração pendente expõe o compromisso aprovado vigente
+- [x] Slug inexistente, empresa `PENDENTE_APROVACAO`, `REJEITADA` e `SUSPENSA` → `ResourceNotFoundError("Empresa não encontrada")` (um teste por caso)
+- [x] Gate `quick` passa
 
 **Tests**: unit
 **Gate**: quick
@@ -676,11 +684,11 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Só empresas `APROVADA` (um teste com uma de cada outro estado)
-- [ ] "água", "Abelha", "Zebu" → ordem "Abelha", "água", "Zebu"
-- [ ] Empresa aprovada sem slug fica fora
-- [ ] Nenhuma empresa → lista vazia
-- [ ] Gate `build` passa (fim do domínio)
+- [x] Só empresas `APROVADA` (um teste com uma de cada outro estado)
+- [x] "água", "Abelha", "Zebu" → ordem "Abelha", "água", "Zebu"
+- [x] Empresa aprovada sem slug fica fora
+- [x] Nenhuma empresa → lista vazia
+- [x] Gate `build` passa (fim do domínio)
 
 **Tests**: unit
 **Gate**: build
@@ -728,6 +736,7 @@ T43 → T44
 - [ ] Ida e volta do slug; `findBySlug` acha e devolve nulo para inexistente
 - [ ] `listarSlugsComPrefixo('cafe')` devolve todos os slugs que começam com `cafe` (`cafe`, `cafe-2`, `cafeteria`); o filtro exato fica em `proximoSlugLivre`
 - [ ] Slug repetido em outra empresa → `SlugEmUsoError`, transição não gravada
+- [ ] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem)
 - [ ] Gate `full` passa
 
 **Tests**: e2e
@@ -753,6 +762,7 @@ T43 → T44
 - [ ] Ida e volta do slug; `listarPorEmpresa` só da empresa, `createdAt` desc
 - [ ] Mesmo slug em empresas diferentes é aceito; na mesma empresa → `SlugEmUsoError` e versão não incrementada
 - [ ] e2e existentes do repositório continuam verdes
+- [ ] e2e de volta a 546/546 (os stubs "não implementado" deixados pelo grupo saem)
 - [ ] Gate `full` passa
 
 **Tests**: e2e
@@ -966,9 +976,9 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Teste confere URL, método e mapeamento de 200; 403/404/409 viram `ApiError` com o `status`
-- [ ] `baixarSelo` lê o nome de `Content-Disposition`
-- [ ] Gate `web` passa
+- [x] Teste confere URL, método e mapeamento de 200; 403/404/409 viram `ApiError` com o `status`
+- [x] `baixarSelo` lê o nome de `Content-Disposition`
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -991,9 +1001,9 @@ T43 → T44
 
 **Done when**:
 
-- [ ] `{ POR_UNIDADE, "1.00" }` → "R$ 1,00 por unidade vendida"; `{ PERCENTUAL, "2.50" }` → "2,5% de cada venda"; `null` → "Regra de doação não definida"
-- [ ] Os 4 rótulos de status literais
-- [ ] Gate `web` passa
+- [x] `{ POR_UNIDADE, "1.00" }` → "R$ 1,00 por unidade vendida"; `{ PERCENTUAL, "2.50" }` → "2,5% de cada venda"; `null` → "Regra de doação não definida"
+- [x] Os 4 rótulos de status literais
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -1018,11 +1028,11 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Um card por campanha com os textos de T30
-- [ ] Botões só na `APROVADA`; "Ver página pública" com `href` = `urlPublica`; "Baixar selo" chama `baixarSelo` e dispara download com `selo-{slug}.svg`
-- [ ] Lista vazia → "Você ainda não tem campanhas." + "Criar campanha"
-- [ ] Sem "valor doado" nem "QR gerado · comprovante"
-- [ ] Gate `web` passa
+- [x] Um card por campanha com os textos de T30
+- [x] Botões só na `APROVADA`; "Ver página pública" com `href` = `urlPublica`; "Baixar selo" chama `baixarSelo` e dispara download com `selo-{slug}.svg`
+- [x] Lista vazia → "Você ainda não tem campanhas." + "Criar campanha"
+- [x] Sem "valor doado" nem "QR gerado · comprovante"
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1045,8 +1055,8 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Teste confere URL e mapeamento de 200; 404 vira `ApiError` 404
-- [ ] Gate `web` passa
+- [x] Teste confere URL e mapeamento de 200; 404 vira `ApiError` 404
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -1071,13 +1081,13 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Card com logo, `nomeFantasia`, cidade/UF e link do `site`
-- [ ] Subtópico com nome, descrição, beneficiada, valor e vigência; "Campanha ainda não iniciada" quando `NAO_INICIADA`
-- [ ] Sem campanhas → "Nenhuma campanha publicada até o momento"
-- [ ] `temLogo` falso ou erro de imagem → iniciais
-- [ ] 404 → "Empresa não encontrada" com link para `/parceiros`
-- [ ] Aviso literal da Fivo Lab presente
-- [ ] Gate `web` passa
+- [x] Card com logo, `nomeFantasia`, cidade/UF e link do `site`
+- [x] Subtópico com nome, descrição, beneficiada, valor e vigência; "Campanha ainda não iniciada" quando `NAO_INICIADA`
+- [x] Sem campanhas → "Nenhuma campanha publicada até o momento"
+- [x] `temLogo` falso ou erro de imagem → iniciais
+- [x] 404 → "Empresa não encontrada" com link para `/parceiros`
+- [x] Aviso literal da Fivo Lab presente
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1102,11 +1112,11 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Abrir com slug de campanha existente chama `scrollIntoView` no subtópico certo
-- [ ] Slug de campanha inexistente → página no topo, sem erro
-- [ ] `isPublicRoute('/empresa/x/y')` verdadeiro
-- [ ] `app/parceiros/[id]` removido e links que apontavam para ele trocados
-- [ ] Gate `web` passa
+- [x] Abrir com slug de campanha existente chama `scrollIntoView` no subtópico certo
+- [x] Slug de campanha inexistente → página no topo, sem erro
+- [x] `isPublicRoute('/empresa/x/y')` verdadeiro
+- [x] `app/parceiros/[id]` removido e links que apontavam para ele trocados
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1129,8 +1139,8 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Teste confere URL, método e corpo; 404 e 409 viram `ApiError`
-- [ ] Gate `web` passa
+- [x] Teste confere URL, método e corpo; 404 e 409 viram `ApiError`
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -1155,12 +1165,12 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Um teste por status com os elementos esperados e ausentes
-- [ ] `REJEITADA` mostra "Motivo da rejeição" e o texto
-- [ ] `EM_ANALISE` mostra "Campanha em análise pela Fivo Lab."
-- [ ] "Enviar para análise" chama `POST /campanhas/{id}/submissao`
-- [ ] 404 → "Campanha não encontrada" com link para `/campanhas`
-- [ ] Gate `web` passa
+- [x] Um teste por status com os elementos esperados e ausentes
+- [x] `REJEITADA` mostra "Motivo da rejeição" e o texto
+- [x] `EM_ANALISE` mostra "Campanha em análise pela Fivo Lab."
+- [x] "Enviar para análise" chama `POST /campanhas/{id}/submissao`
+- [x] 404 → "Campanha não encontrada" com link para `/campanhas`
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1183,8 +1193,8 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Teste confere URL, método e corpo de cada função; capa vai como `multipart/form-data` no campo `capa`
-- [ ] Gate `web` passa
+- [x] Teste confere URL, método e corpo de cada função; capa vai como `multipart/form-data` no campo `capa`
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -1209,10 +1219,10 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Rotas e itens de menu removidos; `APP_ROUTES.private` sem `selos` e `comprovantes`
-- [ ] Remoção dos dois testes condicionais registrada na mensagem de commit, com o motivo
-- [ ] Teste de menu confere a ausência dos dois itens
-- [ ] Gate `web` passa
+- [x] Rotas e itens de menu removidos; `APP_ROUTES.private` sem `selos` e `comprovantes`
+- [x] Remoção dos dois testes condicionais registrada na mensagem de commit, com o motivo
+- [x] Teste de menu confere a ausência dos dois itens
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1237,9 +1247,9 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Um card por empresa com logo, nome e cidade/UF, `href` = `/empresa/{slug}`
-- [ ] Lista vazia → "Nenhuma empresa parceira ainda." com link para `/cadastro`
-- [ ] Gate `web` passa
+- [x] Um card por empresa com logo, nome e cidade/UF, `href` = `/empresa/{slug}`
+- [x] Lista vazia → "Nenhuma empresa parceira ainda." com link para `/cadastro`
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1262,9 +1272,9 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Seção mostra as empresas da API com link para `/empresa/{slug}`
-- [ ] Teste estrutural: nenhum arquivo importa `mockPartners`
-- [ ] Gate `web` passa
+- [x] Seção mostra as empresas da API com link para `/empresa/{slug}`
+- [x] Teste estrutural: nenhum arquivo importa `mockPartners`
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1289,12 +1299,12 @@ T43 → T44
 
 **Done when**:
 
-- [ ] "Salvar rascunho" → `POST /campanhas` com os campos preenchidos e navegação para `/campanhas/{id}`
-- [ ] Com capa → `PUT /campanhas/{id}/capa` depois da criação
-- [ ] "Enviar para análise" → criação + submissão + "Campanha enviada para análise."
-- [ ] Erro da API mostra o texto de `mensagemDeErro` e mantém os campos
-- [ ] Nenhum passo de modelo de selo; `CampaignWizard.tsx` e `StepModeloSelo.tsx` removidos; testes `wizard-*` ajustados ao wizard único, sem perder casos
-- [ ] Gate `web` passa
+- [x] "Salvar rascunho" → `POST /campanhas` com os campos preenchidos e navegação para `/campanhas/{id}`
+- [x] Com capa → `PUT /campanhas/{id}/capa` depois da criação
+- [x] "Enviar para análise" → criação + submissão + "Campanha enviada para análise."
+- [x] Erro da API mostra o texto de `mensagemDeErro` e mantém os campos
+- [x] Nenhum passo de modelo de selo; `CampaignWizard.tsx` e `StepModeloSelo.tsx` removidos; testes `wizard-*` ajustados ao wizard único, sem perder casos
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1317,8 +1327,8 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Teste confere URL, método e corpo `{ motivo }` de cada função; 409 vira `ApiError`
-- [ ] Gate `web` passa
+- [x] Teste confere URL, método e corpo `{ motivo }` de cada função; 409 vira `ApiError`
+- [x] Gate `web` passa
 
 **Tests**: unit
 **Gate**: web
@@ -1343,12 +1353,12 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Itens na ordem da API com "Nova"/"Alteração" e os campos do AC1
-- [ ] Aprovar e rejeitar chamam a rota certa por tipo e retiram o item
-- [ ] Motivo com 19 caracteres → confirmar desabilitado; com 20 → habilitado
-- [ ] 409 mostra a mensagem e recarrega a fila
-- [ ] Fila vazia → "Nenhuma campanha aguardando análise."
-- [ ] Gate `web` passa
+- [x] Itens na ordem da API com "Nova"/"Alteração" e os campos do AC1
+- [x] Aprovar e rejeitar chamam a rota certa por tipo e retiram o item
+- [x] Motivo com 19 caracteres → confirmar desabilitado; com 20 → habilitado
+- [x] 409 mostra a mensagem e recarrega a fila
+- [x] Fila vazia → "Nenhuma campanha aguardando análise."
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
@@ -1373,12 +1383,281 @@ T43 → T44
 
 **Done when**:
 
-- [ ] Item "Campanhas" leva a `/admin/campanhas`
-- [ ] Gate `web` passa
+- [x] Item "Campanhas" leva a `/admin/campanhas`
+- [x] Gate `web` passa
 
 **Tests**: component
 **Gate**: web
 **Commit**: `feat(web): menu do admin com campanhas`
+
+---
+
+### T45: Valores do contrato da página pública da empresa
+
+**What**: Fortalecer `buscar-empresa-publica.spec.ts` para conferir os **valores** de AC1/AC2, além das chaves:
+
+1. Um teste com `jest.useFakeTimers({ now })` e empresa com `nomeFantasia`, `cidade`, `uf`, `site` e `logoArquivoId` definidos, que faz `toEqual` no objeto inteiro: empresa (`slug`, `nomeFantasia`, `cidade`, `uf`, `site`, `temLogo: true`) e campanha (`slug`, `nome`, `descricao`, `beneficiada: { tipo: 'INSTITUICAO', nome: <nomeFantasia da instituição> }`, `regraDoacao`, `vigencia: { inicio, fim }`, `situacao`).
+2. `temLogo: false` para empresa sem logo.
+3. `situacao` nos dois valores: início amanhã → `NAO_INICIADA`; início hoje → `EM_ANDAMENTO`.
+4. No teste de exclusão (`:118-145`), dar **slug** às campanhas `RASCUNHO`, `EM_ANALISE` e `REJEITADA`, para que só o filtro de status as exclua.
+
+**Where**: `src/domain/fivo/campanhas/use-cases/buscar-empresa-publica.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-06 (Página AC1, AC2)
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [x] `toEqual` exato da resposta com todos os valores (empresa + campanha + beneficiada + vigência)
+- [x] `temLogo` `true` e `false` conferidos
+- [x] `situacao` `NAO_INICIADA` e `EM_ANDAMENTO` conferidas com relógio fixado
+- [x] Campanhas fora de `APROVADA` **com slug** ficam fora
+- [x] Mutantes M36, M37, M38, M39, M40, M41, M46 e M47 morrem
+- [x] Gate `quick` passa
+
+**Commit**: `test(api): valores do contrato da página pública da empresa`
+
+---
+
+### T46: Dígitos no slug e sufixo além de `-3`
+
+**What**: Dois casos em `slug.spec.ts`: (1) texto com dígitos preserva os dígitos, ex.: "Café 2000 Ltda." → `cafe-2000-ltda`; (2) `proximoSlugLivre` com base, `-2` e `-3` ocupados → `-4`.
+**Where**: `src/domain/fivo/shared/entities/slug.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-01 (Slug AC3, AC5)
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [x] Caso com dígitos com `toBe` exato
+- [x] Caso `-4` com `toBe` exato
+- [x] Mutantes M2 e M9 morrem
+- [x] Gate `quick` passa
+
+**Commit**: `test(api): slug com dígitos e sufixo -4`
+
+---
+
+### T47: Fallback do slug ligado aos casos de uso de aprovação
+
+**What**: Aprovar uma empresa com `nomeFantasia: '!!!'` → slug `empresa`; aprovar uma campanha com nome `'!!!'` (`NomeCampanha` aceita 3 caracteres após o trim) → slug `campanha`. Opcional e recomendado: segunda empresa `'!!!'` → `empresa-2`.
+**Where**: `src/domain/fivo/empresas/use-cases/aprovar-empresa.spec.ts`, `src/domain/fivo/campanhas/use-cases/aprovar-campanha.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-01 (Slug AC4)
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [x] `slug?.valor).toBe('empresa')` no caso de uso de empresa
+- [x] `slug?.valor).toBe('campanha')` no caso de uso de campanha
+- [x] Mutantes M14 e M22 morrem
+- [x] Gate `quick` passa
+
+**Commit**: `test(api): fallback do slug na aprovação`
+
+---
+
+### T48: Spec do `InMemoryEmpresaRepository` (contrato de slug para a T20)
+
+**What**: Criar `in-memory-empresa-repository.spec.ts` no molde de `in-memory-campanha-repository.spec.ts`, fixando o contrato que a T20 vai implementar no Prisma:
+
+1. `listarSlugsComPrefixo('cafe')` com `cafe`, `cafe-2`, `cafeteria` e `outra` guardados → os três primeiros (o mesmo exemplo da Done-when da T20).
+2. `salvarTransicao` de uma empresa cujo slug já pertence a **outra** empresa → `rejects.toBeInstanceOf(SlugEmUsoError)` e `rejects.toThrow('Slug já está em uso')`, com status e slug gravados intactos.
+3. Salvar de novo a própria empresa com o slug dela → sem conflito.
+4. `findBySlug` acha a empresa e devolve `null` para slug inexistente.
+5. Conflito forçado: uma vez só, e a rival fica guardada.
+
+Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-verde-3` (`aprovar-empresa.spec.ts`).
+**Where**: `test/doubles/in-memory-empresa-repository.spec.ts` (novo); `src/domain/fivo/empresas/use-cases/aprovar-empresa.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-01 (Slug AC5), VIT-06
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [x] Os 5 casos acima com asserção no valor exato
+- [x] Mutantes M52 e M53 morrem
+- [x] Gate `quick` passa
+
+**Commit**: `test(api): contrato de slug do double de empresa`
+
+---
+
+### T49: JSDoc do contrato de `CampanhaRepository`
+
+**What**: (1) No JSDoc de `salvar`, acrescentar que ele grava `slug` e lança `SlugEmUsoError` quando o par `(empresaId, slug)` já existe (What da T6, design §Portas). (2) Restaurar o JSDoc de `listarEmAnalise` ("Campanhas `EM_ANALISE` e campanhas `APROVADA` com alteração pendente.").
+**Where**: `src/domain/fivo/campanhas/ports/campanha-repository.ts`
+**Depends on**: None
+**Requirement**: VIT-01, VIT-02
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: none
+**Gate**: quick
+**Done when**:
+
+- [x] JSDoc de `salvar` cita `slug`, a unicidade por empresa e `SlugEmUsoError`
+- [x] JSDoc de `listarEmAnalise` de volta
+- [x] Gate `quick` passa
+
+**Commit**: `docs(api): contrato de slug na porta de campanha`
+
+---
+
+---
+
+### T50: Beneficiada `CAUSA` na página pública da empresa
+
+**What**: Em `buscar-empresa-publica.spec.ts`, acrescentar um caso com campanha `APROVADA` cuja beneficiada é uma **causa** (`Beneficiada.criar({ causaId })`, causa guardada em `causaRepository` com `nome` conhecido). Conferir `res.value.campanhas[0].beneficiada).toEqual({ tipo: 'CAUSA', nome: '<nome da causa>' })`.
+**Where**: `src/domain/fivo/campanhas/use-cases/buscar-empresa-publica.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-06 (Página AC2)
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [x] Caso com beneficiada `CAUSA` com `toEqual` exato de `{ tipo: 'CAUSA', nome }`
+- [x] Mutante N16 (`tipo: 'INSTITUICAO'` fixo em `buscar-empresa-publica.ts:96`) morre
+- [x] Gate `quick` passa
+
+**Commit**: `test(api): beneficiada causa na página pública da empresa`
+
+---
+
+### T51: Faixa completa de dígitos no slug
+
+**What**: Em `slug.spec.ts`, um caso que cubra os dois extremos da faixa `0-9`, por exemplo "Loja 0 a 9" → `loja-0-a-9`, ou estender o caso atual para "Café 2009 Ltda." → `cafe-2009-ltda`.
+**Where**: `src/domain/fivo/shared/entities/slug.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-01 (Slug AC3)
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [x] `toBe` exato com `0` e `9` no texto
+- [x] Mutante N13 (`[^a-z0-8]` em `slug.ts:13`) morre
+- [x] Gate `quick` passa
+
+**Commit**: `test(api): faixa de dígitos do slug`
+
+---
+
+### T60: Remover `/parceiros/[id]` e `mockPartners`
+
+**What**: Apagar `web/src/app/parceiros/[id]/page.tsx` (detalhe fictício substituído por `/empresa/{slug}`) e `web/src/lib/mockPartners.ts`. Acrescentar o teste estrutural que a T40 pede: nenhum arquivo de `web/src` importa `mockPartners`.
+**Where**: `web/src/app/parceiros/[id]/page.tsx`, `web/src/lib/mockPartners.ts`, `web/tests/unit/` (teste estrutural novo)
+**Depends on**: None
+**Requirement**: VIT-07, VIT-09 (Done-when da T34 e da T40)
+**Priority**: Major
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit (estrutural)
+**Gate**: web
+**Done when**:
+- [x] `parceiros/[id]` e `mockPartners.ts` não existem; nenhum link aponta para `/parceiros/{id}`
+- [x] Teste estrutural varre `web/src/**/*.{ts,tsx}` e falha se algum arquivo importar `mockPartners`
+- [x] Gate `web` passa
+
+**Commit**: `fix(web): remove detalhe fictício de parceiro`
+
+---
+
+### T61: Cobrir o card e o subtópico da página pública
+
+**What**: Em `PaginaEmpresaPublica.test.tsx`, conferir: `img` do logo com `src` = `/api/empresas/publicas/{slug}/logo` quando `temLogo`; link do `site` com `href`; a descrição, "Beneficiada: Instituto X" e a vigência do subtópico; o evento `error` na imagem trocando para as iniciais; e a ausência de "Campanha ainda não iniciada" em `EM_ANDAMENTO`.
+**Where**: `web/tests/component/PaginaEmpresaPublica.test.tsx`
+**Depends on**: None
+**Requirement**: VIT-07 AC6, AC8, AC10; edge case "logo que não carrega"
+**Priority**: Major
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: component
+**Gate**: web
+**Done when**:
+- [x] W9, W10, W11 e W12 morrem: chip sempre visível, `onError` removido, `href` do site trocado e beneficiada por `tipo` fazem algum teste falhar
+- [x] Gate `web` passa
+
+**Commit**: `test(web): card e subtópico da página pública`
+
+---
+
+### T62: Rolagem até a campanha certa e rota do QR
+
+**What**: Fixture com 2 campanhas e `slugCampanha` = a 2ª. Conferir que `scrollIntoView` foi chamado no elemento cujo `id` é o da 2ª (por exemplo, `scrollSpy.mock.contexts[0]` com `id` = slug). Acrescentar um teste de `app/empresa/[slug]/[slugCampanha]/page.tsx` que renderiza a página com `params` resolvidos e prova que o `slugCampanha` chega ao componente, pela rolagem.
+**Where**: `web/tests/component/EmpresaCampanhaScroll.test.tsx`
+**Depends on**: None
+**Requirement**: VIT-07 AC7 (Done-when da T34: "no subtópico certo")
+**Priority**: Major
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: component
+**Gate**: web
+**Done when**:
+- [x] W8b (rolar para a 1ª campanha) e W13 (página sem `slugCampanha`) morrem
+- [x] Gate `web` passa
+
+**Commit**: `test(web): rolagem até a campanha do QR`
+
+---
+
+### T63: "Motivo da rejeição" só em `REJEITADA`
+
+**What**: Teste com `EM_ANALISE` e `motivoUltimaRejeicao` preenchido (reenvio depois de rejeição) conferindo que "Motivo da rejeição" não aparece.
+**Where**: `web/tests/component/DetalheCampanha.test.tsx`
+**Depends on**: None
+**Requirement**: VIT-11 AC2
+**Priority**: Minor
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: component
+**Gate**: web
+**Done when**:
+- [x] W25 morre
+- [x] Gate `web` passa
+
+**Commit**: `test(web): motivo da rejeição só em REJEITADA`
+
+---
+
+### T64: Estabilizar o primeiro teste do wizard sob carga
+
+**What**: `CampaignWizardNew.test.tsx:113` estoura os 5 s em 2 de 3 execuções completas do gate e passa em 832 ms isolado. Dar timeout explícito ao arquivo (por exemplo, `{ timeout: 15000 }` nos testes que percorrem os 3 passos, como `ui-states.test.tsx` já faz) ou aquecer os passos num `beforeAll`.
+**Where**: `web/vitest.config.ts`, `web/tests/setup.ts`, `web/tests/integration/ui-states.test.tsx`
+**Execução**: o aquecimento não bastou, porque o gate também caía em `waitFor` de 1 s (`cadastro-instituicao`, `EmpresaCampanhaScroll`) e no `ui-states` com 15 s fixos. A correção virou global: `testTimeout: 30000`, `asyncUtilTimeout: 5000` no `setup.ts` e os `15000` explícitos do `ui-states` removidos. Continuam caindo, dependendo da semente, `SeletorCausa.property-selecao` e `CadastroInstituicao.property-envio-valido` (contraexemplo com `id` só de espaços). Isso vem de antes da feature e fica como follow-up fora do escopo.
+**Depends on**: None
+**Requirement**: Gate `web` (T41)
+**Priority**: Minor
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: component
+**Gate**: web
+**Done when**:
+- [x] Três execuções seguidas de `npm test` sem falha neste arquivo
+- [x] Gate `web` passa (exceto as 2 propriedades por semente, fora do escopo)
+
+**Commit**: `test(web): timeout do wizard sob carga`
+
+---
+
+### T66: Página pública — vigência sem `fim` e erro que não é 404
+
+**What**: Em `PaginaEmpresaPublica.test.tsx`, acrescentar dois casos:
+
+- (a) Campanha com `vigencia: { inicio: "2026-11-01" }` (sem `fim`, que `design.md:86` declara opcional), conferindo `getByText("Vigência: A partir de 01/11/2026")`.
+- (b) `GET /empresas/publicas/{slug}` respondendo 500, conferindo que "Empresa não encontrada" **não** aparece e que aparece o estado de erro do `AsyncState`, com o botão de nova tentativa. Se der, conferir também que o clique refaz a requisição.
+
+**Where**: `web/tests/component/PaginaEmpresaPublica.test.tsx`
+**Depends on**: None
+**Requirement**: VIT-07 AC6 (vigência) e AC11; Test Coverage Matrix ("estados vazio/erro/carregando")
+**Priority**: Minor
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: component
+**Gate**: web
+**Done when**:
+- [x] X4 morre (`"A partir de"` → `"Desde"` em `S/components/empresa/PaginaEmpresaPublica.tsx:40` faz algum teste falhar)
+- [x] X11 morre (`e.status === 404` → `e.status >= 400` em `PaginaEmpresaPublica.tsx:61` faz algum teste falhar)
+- [x] Gate `web` passa
+
+**Commit**: `test(web): vigência sem fim e erro 5xx na página pública`
 
 ---
 
@@ -1396,6 +1675,8 @@ Fase 5: T23 T24 T25 T26 T27 T28
 Fase 6: T29 T30 T31 T35 T36 T38
 Fase 7: T32 T33 T34 T39 T40
 Fase 8: T37 T41 T42 T43 T44
+Fase 3b: T45 T46 T47 T48 T49 T50 T51
+Fase 8b: T60 T61 T62 T63 T64 T66
 ```
 
 ### Divisão sugerida do `web` entre 6 pessoas

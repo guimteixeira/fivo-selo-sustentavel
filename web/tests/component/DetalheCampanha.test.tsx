@@ -196,6 +196,20 @@ describe("Detalhe da campanha — um bloco por status", () => {
     expect(screen.queryByText("Campanha em análise pela Fivo Lab.")).not.toBeInTheDocument();
   });
 
+  it('EM_ANALISE reenviada depois de rejeição: não mostra "Motivo da rejeição"', async () => {
+    await abrir(
+      campanha("EM_ANALISE", {
+        motivoUltimaRejeicao: "A descrição não explica como a doação é feita.",
+      }),
+    );
+
+    expect(screen.getByText("Campanha em análise pela Fivo Lab.")).toBeInTheDocument();
+    expect(screen.queryByText("Motivo da rejeição")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("A descrição não explica como a doação é feita."),
+    ).not.toBeInTheDocument();
+  });
+
   it('REJEITADA: mostra "Motivo da rejeição" com o texto e oferece edição e envio', async () => {
     await abrir(
       campanha("REJEITADA", {

@@ -247,6 +247,17 @@ describe('AprovarCampanhaUseCase', () => {
       expect((await salva(campanha)).slug?.valor).toBe('verao-solidario');
     });
 
+    it('should fall back to "campanha" when the name has no valid character', async () => {
+      const campanha = await criarHomonima({
+        nome: valor(NomeCampanha.criar('!!!')),
+      });
+
+      const response = await sut.execute(campanha.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      expect((await salva(campanha)).slug?.valor).toBe('campanha');
+    });
+
     it('should give a same-name campaign of the same empresa the -2 suffix and keep the first one', async () => {
       const primeira = await criarHomonima();
       const segunda = await criarHomonima();

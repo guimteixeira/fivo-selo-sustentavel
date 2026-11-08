@@ -251,18 +251,18 @@ Com cadastro de empresa, catálogo e campanhas prontos no `api`, falta o caminho
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| VIT-01 | P1: Slug permanente de empresa e campanha | Tasks | In Tasks |
-| VIT-02 | P1: Campanhas na área da empresa — API | Tasks | In Tasks |
-| VIT-03 | P1: Campanhas na área da empresa — `web` | Tasks | In Tasks |
-| VIT-04 | P1: Selo genérico com QR Code — API | Tasks | In Tasks |
-| VIT-05 | P1: Selo genérico com QR Code — botão no `web` | Tasks | In Tasks |
-| VIT-06 | P1: Página pública da empresa — API | Tasks | In Tasks |
-| VIT-07 | P1: Página pública da empresa — `web` | Tasks | In Tasks |
-| VIT-08 | P1: Vitrine de parceiros — API | Tasks | In Tasks |
-| VIT-09 | P1: Vitrine de parceiros — `web` | Tasks | In Tasks |
-| VIT-10 | P1: Nova campanha ligada à API — `web` | Tasks | In Tasks |
-| VIT-11 | P1: Detalhe e correção de campanha — `web` | Tasks | In Tasks |
-| VIT-12 | P1: Fila de campanhas no admin — `web` | Tasks | In Tasks |
+| VIT-01 | P1: Slug permanente de empresa e campanha | Tasks | Implementing |
+| VIT-02 | P1: Campanhas na área da empresa — API | Tasks | Implementing |
+| VIT-03 | P1: Campanhas na área da empresa — `web` | Tasks | Implementing |
+| VIT-04 | P1: Selo genérico com QR Code — API | Tasks | Implementing |
+| VIT-05 | P1: Selo genérico com QR Code — botão no `web` | Tasks | Implementing |
+| VIT-06 | P1: Página pública da empresa — API | Tasks | Implementing |
+| VIT-07 | P1: Página pública da empresa — `web` | Tasks | Implementing |
+| VIT-08 | P1: Vitrine de parceiros — API | Tasks | Implementing |
+| VIT-09 | P1: Vitrine de parceiros — `web` | Tasks | Implementing |
+| VIT-10 | P1: Nova campanha ligada à API — `web` | Tasks | Implementing |
+| VIT-11 | P1: Detalhe e correção de campanha — `web` | Tasks | Implementing |
+| VIT-12 | P1: Fila de campanhas no admin — `web` | Tasks | Implementing |
 
 **ID format:** `[CATEGORY]-[NUMBER]`
 

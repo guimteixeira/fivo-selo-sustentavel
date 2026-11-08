@@ -191,8 +191,27 @@
 - **Scope**: `vitrine-e-selo` (nova); supersede AD-004, AD-007 e AD-009; emenda AD-003 (comprovante deixa de ser conteúdo moderado na v1) e `campanhas` (CAMP-09 e CAMP-10 saem da v1). Autoria: domínio e `web` pelo grupo (6 pessoas); o agente faz só a infra do `api`, depois do gate de handoff do domínio (mesma regra do AD-020/AD-021). O agente não escreve nem edita código em `web/**` desta feature; pode ler, revisar e rodar gates.
 - **Date**: 2026-10-28
 - **Status**: active
+- **Exceção de autoria (2026-11-08, gate de handoff)**: a rodada 1 das verificações deu FAIL no domínio (`validation-dominio.md`) e no `web` (`validation-web.md`). O usuário pediu explicitamente que o agente fizesse as correções ("rode o verifier e faça as correções necessárias"). Com isso, o agente aplica as tasks T45–T49 (testes e JSDoc em `src/domain/**` e `test/doubles/**`) e T60–T64 (`web/**`: remoção de `/parceiros/[id]` e `mockPartners`, e testes), e as que a rodada 2 abriu (T50, T51, T66, só de teste), além de trocar o gate `Web` (T65 da verificação). A autorização cobre o ciclo de correção e reverificação (até 3 rodadas). As tasks T1–T18 e T29–T44 continuam de autoria humana.
 
 ## Handoff
+
+### Handoff — gate de handoff de `vitrine-e-selo` (2026-11-08)
+
+- **Feature**: `vitrine-e-selo` (`.specs/features/vitrine-e-selo/`)
+- **Phase / Task**: as tasks humanas (domínio T1–T18 e `web` T29–T44) estão verificadas e marcadas. As duas verificações deram **PASS** na rodada 3 (diff `96c313f..445d677`):
+  - `validation-dominio.md`: rodada 1 FAIL → T45–T49; rodada 2 FAIL → T50, T51.
+  - `validation-web.md`: rodada 1 FAIL → T60–T64 (e o gate `Web` com `next typegen`); rodada 2 FAIL → T66.
+  - As correções foram feitas pelo agente, com a exceção registrada no AD-023.
+- **Gate**: `api` com build, tsc e eslint verdes e unit 706/706. O e2e dá 507/546: as 39 falhas vêm dos stubs "não implementado: T20/T21" e saem com a infra. `web` com 331 ok e 2 skip (2/2 execuções).
+- **Sensor**: domínio com 81 mutantes distintos (77 mortos, 4 equivalentes); `web` com 44/44 mortos na superfície da feature. O único sobrevivente, N2, está em `AsyncState`, fora do diff.
+- **Next step**: Fase 4 (T19–T22), depois a Fase 5 (T23–T28). São 10 tasks, então vale oferecer 2 workers. Depois, o teste ponta a ponta do grupo em 10/11 (lista de UAT em `validation-web.md`) e a verificação final (`validation.md`).
+- **Riscos**: até a T21 entrar, a `homologacao` responde 500 em toda aprovação. Nas e2e de T25/T27, o `DomainExceptionFilter` precisa devolver "Empresa não encontrada" e "Campanha não encontrada", não a mensagem genérica.
+- **Follow-ups**:
+  - os de `validation-dominio.md` e `validation-web.md`;
+  - fora do escopo: a propriedade `CadastroInstituicao.property-envio-valido` falha com a semente 23 já na base (`id` só de espaços).
+- **Lições**: L-035…L-053 registradas como candidatas.
+- **Uncommitted files**: none
+- **Branch**: `fix/vitrine-gate-handoff`, enviada ao remoto com a PR #267 aberta contra `homologacao`
 
 ### Handoff — planejamento de `vitrine-e-selo` (2026-10-28)
 

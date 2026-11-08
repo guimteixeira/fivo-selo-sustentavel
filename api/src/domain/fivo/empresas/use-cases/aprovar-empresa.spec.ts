@@ -247,6 +247,38 @@ describe('AprovarEmpresaUseCase', () => {
       );
     });
 
+    it('should give a third empresa with the same name the -3 suffix', async () => {
+      const empresas = [
+        await criarEmpresaPendente({ nomeFantasia: 'Café Serra Verde' }),
+        await criarEmpresaPendente({ nomeFantasia: 'Café Serra Verde' }),
+        await criarEmpresaPendente({ nomeFantasia: 'Café Serra Verde' }),
+      ];
+
+      for (const empresa of empresas) {
+        await sut.execute(empresa.id.toString(), admin);
+      }
+
+      expect((await lerEmpresa(empresas[2].id.toString())).slug?.valor).toBe(
+        'cafe-serra-verde-3',
+      );
+    });
+
+    it('should fall back to "empresa" when nomeFantasia has no valid character, and to "empresa-2" for the next one', async () => {
+      const primeira = await criarEmpresaPendente({ nomeFantasia: '!!!' });
+      const segunda = await criarEmpresaPendente({ nomeFantasia: '!!!' });
+
+      await sut.execute(primeira.id.toString(), admin);
+      const response = await sut.execute(segunda.id.toString(), admin);
+
+      expect(response.isRight()).toBe(true);
+      expect((await lerEmpresa(primeira.id.toString())).slug?.valor).toBe(
+        'empresa',
+      );
+      expect((await lerEmpresa(segunda.id.toString())).slug?.valor).toBe(
+        'empresa-2',
+      );
+    });
+
     it('should keep the slug of an empresa that already has one', async () => {
       const empresa = await criarEmpresaPendente({
         nomeFantasia: 'Café Serra Verde',
