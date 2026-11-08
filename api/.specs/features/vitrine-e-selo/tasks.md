@@ -1653,9 +1653,9 @@ Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-
 **Tests**: component
 **Gate**: web
 **Done when**:
-- [ ] X4 morre (`"A partir de"` → `"Desde"` em `S/components/empresa/PaginaEmpresaPublica.tsx:40` faz algum teste falhar)
-- [ ] X11 morre (`e.status === 404` → `e.status >= 400` em `PaginaEmpresaPublica.tsx:61` faz algum teste falhar)
-- [ ] Gate `web` passa
+- [x] X4 morre (`"A partir de"` → `"Desde"` em `S/components/empresa/PaginaEmpresaPublica.tsx:40` faz algum teste falhar)
+- [x] X11 morre (`e.status === 404` → `e.status >= 400` em `PaginaEmpresaPublica.tsx:61` faz algum teste falhar)
+- [x] Gate `web` passa
 
 **Commit**: `test(web): vigência sem fim e erro 5xx na página pública`
 

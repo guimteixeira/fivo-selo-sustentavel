@@ -96,6 +96,46 @@ describe("PaginaEmpresaPublica (T33)", () => {
     expect(screen.getByText("Vigência: 01/11/2026 até 31/01/2027")).toBeInTheDocument();
   });
 
+  it("mostra 'A partir de' na vigência sem fim (AC6)", async () => {
+    mock.responderPara("/empresas/publicas/cafe-serra-verde", {
+      status: 200,
+      body: empresaFixture({
+        campanhas: [
+          { ...empresaFixture().campanhas[0], vigencia: { inicio: "2026-11-01" } },
+        ],
+      }),
+    });
+
+    montar();
+
+    expect(await screen.findByText("Vigência: A partir de 01/11/2026")).toBeInTheDocument();
+  });
+
+  it("num erro 500 mostra o erro com nova tentativa, não 'Empresa não encontrada' (AC11)", async () => {
+    mock.responderPara("/empresas/publicas/cafe-serra-verde", {
+      status: 500,
+      body: { statusCode: 500, message: "Internal server error" },
+    });
+
+    montar();
+
+    const tentar = await screen.findByRole("button", { name: "Tentar novamente" });
+    expect(screen.queryByText("Empresa não encontrada")).toBeNull();
+    expect(
+      screen.getByText("O servidor está indisponível no momento. Tente novamente em instantes."),
+    ).toBeInTheDocument();
+    const antes = mock.chamadas.length;
+
+    mock.responderPara("/empresas/publicas/cafe-serra-verde", {
+      status: 200,
+      body: empresaFixture(),
+    });
+    fireEvent.click(tentar);
+
+    expect(await screen.findByText("Café Serra Verde")).toBeInTheDocument();
+    expect(mock.chamadas.length).toBe(antes + 1);
+  });
+
   it("troca o logo que não carrega pelas iniciais (edge case)", async () => {
     mock.responderPara("/empresas/publicas/cafe-serra-verde", {
       status: 200,
