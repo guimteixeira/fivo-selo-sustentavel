@@ -2421,6 +2421,117 @@
       }
     },
     "/campanhas": {
+      "get": {
+        "operationId": "CampanhasController_listar",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "nome": {
+                        "type": "string"
+                      },
+                      "regraDoacao": {
+                        "nullable": true,
+                        "properties": {
+                          "percentual": {
+                            "description": "Percentual sobre o preço em string decimal (`\"12.50\"`)",
+                            "type": "string"
+                          },
+                          "tipo": {
+                            "enum": [
+                              "POR_UNIDADE",
+                              "PERCENTUAL"
+                            ],
+                            "type": "string"
+                          },
+                          "valor": {
+                            "description": "R$ por unidade em string decimal (`\"1.50\"`)",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "tipo"
+                        ],
+                        "type": "object"
+                      },
+                      "status": {
+                        "enum": [
+                          "RASCUNHO",
+                          "EM_ANALISE",
+                          "APROVADA",
+                          "REJEITADA"
+                        ],
+                        "type": "string"
+                      },
+                      "urlPublica": {
+                        "description": "`{WEB_URL}/empresa/{slugEmpresa}/{slugCampanha}` (o destino do QR); `null` fora de APROVADA",
+                        "nullable": true,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "nome",
+                      "status",
+                      "regraDoacao",
+                      "urlPublica"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Todas as campanhas da empresa da sessão, e só elas"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Sessão ausente, inválida ou expirada"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Acesso negado"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroResposta"
+                }
+              }
+            },
+            "description": "Empresa não encontrada"
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Campanhas da empresa, da mais recente para a mais antiga",
+        "tags": [
+          "campanhas"
+        ]
+      },
       "post": {
         "operationId": "CampanhasController_criar",
         "parameters": [],

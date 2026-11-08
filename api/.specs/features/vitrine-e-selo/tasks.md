@@ -841,10 +841,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] 200 com só as campanhas da empresa, ordem e campos do contrato
-- [ ] `urlPublica` preenchida na `APROVADA`, `null` nas outras
-- [ ] ADMIN e INSTITUICAO → 403; sem sessão → 401
-- [ ] Gate `full` passa
+- [x] 200 com só as campanhas da empresa, ordem e campos do contrato
+- [x] `urlPublica` preenchida na `APROVADA`, `null` nas outras
+- [x] ADMIN e INSTITUICAO → 403; sem sessão → 401
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full

@@ -21,6 +21,7 @@ import { EditarDadosEmpresaUseCase } from '@domain/fivo/empresas/use-cases/edita
 import { InativarCausaUseCase } from '@domain/fivo/catalogo/use-cases/inativar-causa';
 import { InativarInstituicaoUseCase } from '@domain/fivo/catalogo/use-cases/inativar-instituicao';
 import { ListarBeneficiadasUseCase } from '@domain/fivo/catalogo/use-cases/listar-beneficiadas';
+import { ListarCampanhasDaEmpresaUseCase } from '@domain/fivo/campanhas/use-cases/listar-campanhas-da-empresa';
 import { ListarCausasAtivasUseCase } from '@domain/fivo/catalogo/use-cases/listar-causas-ativas';
 import { ListarFilaAprovacaoUseCase } from '@domain/fivo/empresas/use-cases/listar-fila-aprovacao';
 import { ListarFilaCampanhasUseCase } from '@domain/fivo/campanhas/use-cases/listar-fila-campanhas';
@@ -110,6 +111,7 @@ import { SenhaController } from './identidade/senha.controller';
     AprovarAlteracaoCampanhaUseCase,
     RejeitarAlteracaoCampanhaUseCase,
     BuscarCampanhaPublicaUseCase,
+    ListarCampanhasDaEmpresaUseCase,
   ],
 })
 export class HttpModule {}
