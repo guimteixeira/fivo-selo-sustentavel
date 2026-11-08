@@ -11,6 +11,10 @@ describe('Slug', () => {
     expect(Slug.de('  Água & Sabão!! ', 'empresa').valor).toBe('agua-sabao');
   });
 
+  it('should keep digits', () => {
+    expect(Slug.de('Café 2000 Ltda.', 'empresa').valor).toBe('cafe-2000-ltda');
+  });
+
   it('should strip cedilla and collapse repeated hyphens', () => {
     expect(Slug.de('ÇÃO--já', 'campanha').valor).toBe('cao-ja');
   });
@@ -65,6 +69,16 @@ describe('proximoSlugLivre', () => {
     expect(
       proximoSlugLivre(base, ['cafe-serra-verde', 'cafe-serra-verde-2']).valor,
     ).toBe('cafe-serra-verde-3');
+  });
+
+  it('should append -4 when the base, -2 and -3 are taken', () => {
+    expect(
+      proximoSlugLivre(base, [
+        'cafe-serra-verde',
+        'cafe-serra-verde-2',
+        'cafe-serra-verde-3',
+      ]).valor,
+    ).toBe('cafe-serra-verde-4');
   });
 
   it('should return the base when only -2 is taken', () => {

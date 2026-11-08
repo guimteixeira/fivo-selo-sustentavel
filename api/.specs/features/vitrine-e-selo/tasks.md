@@ -1429,10 +1429,10 @@ T60, T61, T62, T63, T64 não têm dependência. Origem: `validation-web.md`, rod
 **Gate**: quick
 **Done when**:
 
-- [ ] Caso com dígitos com `toBe` exato
-- [ ] Caso `-4` com `toBe` exato
-- [ ] Mutantes M2 e M9 morrem
-- [ ] Gate `quick` passa
+- [x] Caso com dígitos com `toBe` exato
+- [x] Caso `-4` com `toBe` exato
+- [x] Mutantes M2 e M9 morrem
+- [x] Gate `quick` passa
 
 **Commit**: `test(api): slug com dígitos e sufixo -4`
 
