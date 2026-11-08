@@ -1538,9 +1538,9 @@ Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-
 **Gate**: quick
 **Done when**:
 
-- [ ] `toBe` exato com `0` e `9` no texto
-- [ ] Mutante N13 (`[^a-z0-8]` em `slug.ts:13`) morre
-- [ ] Gate `quick` passa
+- [x] `toBe` exato com `0` e `9` no texto
+- [x] Mutante N13 (`[^a-z0-8]` em `slug.ts:13`) morre
+- [x] Gate `quick` passa
 
 **Commit**: `test(api): faixa de dígitos do slug`
 
