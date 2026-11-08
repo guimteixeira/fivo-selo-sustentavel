@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 54,
+  "next_id": 56,
   "lessons": [
     {
       "id": "L-001",
@@ -916,6 +916,42 @@
       ],
       "created": "2026-11-08T14:56:20Z",
       "last_seen": "2026-11-08T14:56:20Z"
+    },
+    {
+      "id": "L-054",
+      "key": "spec_precision_gap::when an ac requires a brand or visual asset name the exact asset file or element or the test pins an improvised placeholder",
+      "text": "When an AC requires a brand or visual asset, name the exact asset file or element, or the test pins an improvised placeholder",
+      "signal": "spec_precision_gap",
+      "scope": "specs",
+      "status": "candidate",
+      "features": [
+        "vitrine-e-selo"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md SP-I1 (Selo AC2, src/infra/selo/qrcode-renderizador-de-selo.spec.ts:116) (specs)"
+      ],
+      "created": "2026-11-08T16:28:40Z",
+      "last_seen": "2026-11-08T16:28:40Z"
+    },
+    {
+      "id": "L-055",
+      "key": "spec_precision_gap::when a spec orders records by a timestamp field check whether later transitions overwrite it and name the event the order must follow",
+      "text": "When a spec orders records by a timestamp field, check whether later transitions overwrite it and name the event the order must follow",
+      "signal": "spec_precision_gap",
+      "scope": "specs",
+      "status": "candidate",
+      "features": [
+        "vitrine-e-selo"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md SP-I2 (backfill em ordem de decididoEm, src/domain/fivo/empresas/entities/empresa.ts:177-232) (specs)"
+      ],
+      "created": "2026-11-08T16:28:40Z",
+      "last_seen": "2026-11-08T16:28:40Z"
     }
   ]
 }

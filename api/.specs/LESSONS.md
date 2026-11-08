@@ -312,6 +312,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: validation-web.md r3 N2 / web/src/components/ui/AsyncState.tsx:52 (web-tests)
 - last seen: 2026-11-08T14:56:20Z
 
+### L-054 - When an AC requires a brand or visual asset, name the exact asset file or element, or the test pins an improvised placeholder
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `specs` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation.md SP-I1 (Selo AC2, src/infra/selo/qrcode-renderizador-de-selo.spec.ts:116) (specs)
+- last seen: 2026-11-08T16:28:40Z
+
+### L-055 - When a spec orders records by a timestamp field, check whether later transitions overwrite it and name the event the order must follow
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `specs` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation.md SP-I2 (backfill em ordem de decididoEm, src/domain/fivo/empresas/entities/empresa.ts:177-232) (specs)
+- last seen: 2026-11-08T16:28:40Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

@@ -195,6 +195,30 @@
 
 ## Handoff
 
+### Handoff — infra de `vitrine-e-selo` concluída (2026-11-08)
+
+- **Feature**: `vitrine-e-selo` (`.specs/features/vitrine-e-selo/`)
+- **Phase / Task**: Execute concluído; T1–T66 completas. A infra (T19–T28) foi feita por 2 workers sequenciais. A verificação final deu **PASS** na rodada 1 (`validation.md`, diff `6ddf194..6dc3110`). `validate_state.py` sai com 0, e VIT-01…12 estão ✅ Verified no `spec.md`.
+- **Gate**: build, tsc e eslint verdes; unit 713/713; e2e 585/585; `prisma migrate diff` sem drift.
+- **Sensor (infra)**: 28 mutantes, 27 mortos, 1 equivalente (M27, guarda `slug: null` do `updateMany` do backfill).
+- **Decisões da infra**:
+  - as rotas novas devolvem os 404 com mensagem literal ("Campanha não encontrada", "Empresa não encontrada"), porque o `DomainExceptionFilter` troca a mensagem;
+  - o logo público usa um 404 único para empresa sem logo, inexistente ou suspensa;
+  - o selo tem fundo verde `#1b5e20`;
+  - `WEB_URL` é obrigatório em produção: sem ele, a app não sobe;
+  - `qrcode` entrou como dependência de produção; `jsqr` e `@resvg/resvg-js`, de dev;
+  - a migration `20261108153354_slug` foi gerada por `migrate diff`, porque `migrate dev` não roda sem terminal interativo;
+  - backfill: `npm run backfill:slugs`.
+- **Next step**: revisar e enviar `feat/vitrine-infra` para PR contra `homologacao`. Depois, rodar `npm run backfill:slugs` no deploy e o teste ponta a ponta do grupo em 10/11: UAT de 320 px, download real nos navegadores e QR lido por celular a 2,0 cm (`validation-web.md`).
+- **Follow-ups** (não bloqueiam; detalhes em `validation.md`):
+  - e2e de duas aprovações HTTP concorrentes de empresas homônimas;
+  - SP-I1: a spec não define a marca Fivo do selo;
+  - SP-I2: o backfill de empresa `SUSPENSA` ordena pela data da suspensão, não pela da aprovação;
+  - o selo é servido sem `nosniff` nem CSP (é `attachment`, risco baixo).
+- **Lições**: L-054 e L-055 registradas como candidatas.
+- **Uncommitted files**: none
+- **Branch**: `feat/vitrine-infra` (local, não enviada ao remoto)
+
 ### Handoff — gate de handoff de `vitrine-e-selo` (2026-11-08)
 
 - **Feature**: `vitrine-e-selo` (`.specs/features/vitrine-e-selo/`)
