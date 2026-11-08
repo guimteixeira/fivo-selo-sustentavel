@@ -19,7 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "openapi:export": "ts-node -r tsconfig-paths/register scripts/exportar-openapi.ts"
+    "openapi:export": "ts-node -r tsconfig-paths/register scripts/exportar-openapi.ts",
+    "backfill:slugs": "ts-node -r tsconfig-paths/register prisma/scripts/backfill-slugs.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

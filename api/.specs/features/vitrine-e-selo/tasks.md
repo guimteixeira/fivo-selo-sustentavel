@@ -785,10 +785,10 @@ T60, T61, T62, T63, T64, T66 não têm dependência. Origem: `validation-web.md`
 
 **Done when**:
 
-- [ ] Duas empresas homônimas aprovadas recebem base e `-2` pela ordem de `decididoEm`
-- [ ] Empresa `PENDENTE_APROVACAO` e campanha `RASCUNHO` ficam sem slug
-- [ ] Segunda execução não muda nada
-- [ ] Gate `full` passa
+- [x] Duas empresas homônimas aprovadas recebem base e `-2` pela ordem de `decididoEm`
+- [x] Empresa `PENDENTE_APROVACAO` e campanha `RASCUNHO` ficam sem slug
+- [x] Segunda execução não muda nada
+- [x] Gate `full` passa
 
 **Tests**: e2e
 **Gate**: full
