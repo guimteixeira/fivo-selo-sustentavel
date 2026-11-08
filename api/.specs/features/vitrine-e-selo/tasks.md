@@ -1572,8 +1572,8 @@ Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-
 **Tests**: component
 **Gate**: web
 **Done when**:
-- [ ] W25 morre
-- [ ] Gate `web` passa
+- [x] W25 morre
+- [x] Gate `web` passa
 
 **Commit**: `test(web): motivo da rejeição só em REJEITADA`
 
