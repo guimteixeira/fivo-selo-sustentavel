@@ -140,6 +140,7 @@ docker compose run --rm migrate npm run backfill:slugs
 - Os dados ficam nos volumes `postgres-data` e `storage`, que devem entrar no backup. `docker compose down -v` apaga os dois.
 - O compose não termina TLS. Ponha um proxy reverso com HTTPS (Caddy, Nginx, o balanceador da hospedagem) na frente do web. Para testar em `http://localhost`, use `COOKIE_SECURE=false`, senão o navegador descarta o cookie de sessão.
 - A imagem da API mantém as devDependencies porque o CLI do Prisma e o `ts-node` (usado pelo backfill) estão nelas. O `API_URL` do web é argumento de build (`--build-arg API_URL=...`), porque o Next fixa os rewrites no build.
+- Dados de demonstração (causas, empresas, instituições e campanhas fictícias em vários status, todas com a senha `Demo-Fivo-2026` ou `SEED_SENHA`): `docker compose exec api npm run seed:demo`. Precisa do admin já criado e pode rodar de novo sem duplicar.
 - Para usar as imagens sem o compose: `docker build -t fivo-api ./api` e `docker build --build-arg API_URL=http://<host-da-api>:3000 -t fivo-web ./web`.
 
 ### Sem Docker
