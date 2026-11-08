@@ -86,7 +86,7 @@ Prazo final: **qua 11/11/2026**.
 | Quick | Tasks de domínio e T23 | `cd api && npx tsc -p tsconfig.json --noEmit && npx eslint "{src,test}/**/*.ts" && npx jest` |
 | Full | Tasks de infra com e2e | `cd api && npx tsc -p tsconfig.json --noEmit && npx eslint "{src,test}/**/*.ts" && npx jest && npx jest --config ./test/jest-e2e.json` |
 | Build | Fim de fase no `api`, schema/config | `cd api && npm run build && npx tsc -p tsconfig.json --noEmit && npx eslint "{src,test}/**/*.ts" && npx jest && npx jest --config ./test/jest-e2e.json` |
-| Web | Toda task do `web` | `cd web && npx tsc --noEmit && npm run lint && npm test` |
+| Web | Toda task do `web` | `cd web && npx next typegen && npx tsc --noEmit && npm run lint && npm test` |
 
 ---
 
@@ -200,6 +200,14 @@ T37 → T41
 T42 → T43
 T43 → T44
 ```
+
+### Phase 3b: Correções do gate de handoff do domínio (🤖, exceção AD-023)
+
+T45, T46, T47, T48, T49 não têm dependência. Origem: `validation-dominio.md`, rodada 1.
+
+### Phase 8b: Correções da verificação do `web` (🤖, exceção AD-023)
+
+T60, T61, T62, T63, T64 não têm dependência. Origem: `validation-web.md`, rodada 1. A T65 da verificação (gate `Web` com `next typegen`) foi aplicada direto em §Gate Check Commands.
 
 ---
 
@@ -1382,6 +1390,213 @@ T43 → T44
 
 ---
 
+### T45: Valores do contrato da página pública da empresa
+
+**What**: Fortalecer `buscar-empresa-publica.spec.ts` para conferir os **valores** de AC1/AC2, além das chaves:
+
+1. Um teste com `jest.useFakeTimers({ now })` e empresa com `nomeFantasia`, `cidade`, `uf`, `site` e `logoArquivoId` definidos, que faz `toEqual` no objeto inteiro: empresa (`slug`, `nomeFantasia`, `cidade`, `uf`, `site`, `temLogo: true`) e campanha (`slug`, `nome`, `descricao`, `beneficiada: { tipo: 'INSTITUICAO', nome: <nomeFantasia da instituição> }`, `regraDoacao`, `vigencia: { inicio, fim }`, `situacao`).
+2. `temLogo: false` para empresa sem logo.
+3. `situacao` nos dois valores: início amanhã → `NAO_INICIADA`; início hoje → `EM_ANDAMENTO`.
+4. No teste de exclusão (`:118-145`), dar **slug** às campanhas `RASCUNHO`, `EM_ANALISE` e `REJEITADA`, para que só o filtro de status as exclua.
+
+**Where**: `src/domain/fivo/campanhas/use-cases/buscar-empresa-publica.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-06 (Página AC1, AC2)
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [ ] `toEqual` exato da resposta com todos os valores (empresa + campanha + beneficiada + vigência)
+- [ ] `temLogo` `true` e `false` conferidos
+- [ ] `situacao` `NAO_INICIADA` e `EM_ANDAMENTO` conferidas com relógio fixado
+- [ ] Campanhas fora de `APROVADA` **com slug** ficam fora
+- [ ] Mutantes M36, M37, M38, M39, M40, M41, M46 e M47 morrem
+- [ ] Gate `quick` passa
+
+**Commit**: `test(api): valores do contrato da página pública da empresa`
+
+---
+
+### T46: Dígitos no slug e sufixo além de `-3`
+
+**What**: Dois casos em `slug.spec.ts`: (1) texto com dígitos preserva os dígitos, ex.: "Café 2000 Ltda." → `cafe-2000-ltda`; (2) `proximoSlugLivre` com base, `-2` e `-3` ocupados → `-4`.
+**Where**: `src/domain/fivo/shared/entities/slug.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-01 (Slug AC3, AC5)
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [ ] Caso com dígitos com `toBe` exato
+- [ ] Caso `-4` com `toBe` exato
+- [ ] Mutantes M2 e M9 morrem
+- [ ] Gate `quick` passa
+
+**Commit**: `test(api): slug com dígitos e sufixo -4`
+
+---
+
+### T47: Fallback do slug ligado aos casos de uso de aprovação
+
+**What**: Aprovar uma empresa com `nomeFantasia: '!!!'` → slug `empresa`; aprovar uma campanha com nome `'!!!'` (`NomeCampanha` aceita 3 caracteres após o trim) → slug `campanha`. Opcional e recomendado: segunda empresa `'!!!'` → `empresa-2`.
+**Where**: `src/domain/fivo/empresas/use-cases/aprovar-empresa.spec.ts`, `src/domain/fivo/campanhas/use-cases/aprovar-campanha.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-01 (Slug AC4)
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [ ] `slug?.valor).toBe('empresa')` no caso de uso de empresa
+- [ ] `slug?.valor).toBe('campanha')` no caso de uso de campanha
+- [ ] Mutantes M14 e M22 morrem
+- [ ] Gate `quick` passa
+
+**Commit**: `test(api): fallback do slug na aprovação`
+
+---
+
+### T48: Spec do `InMemoryEmpresaRepository` (contrato de slug para a T20)
+
+**What**: Criar `in-memory-empresa-repository.spec.ts` no molde de `in-memory-campanha-repository.spec.ts`, fixando o contrato que a T20 vai implementar no Prisma:
+
+1. `listarSlugsComPrefixo('cafe')` com `cafe`, `cafe-2`, `cafeteria` e `outra` guardados → os três primeiros (o mesmo exemplo da Done-when da T20).
+2. `salvarTransicao` de uma empresa cujo slug já pertence a **outra** empresa → `rejects.toBeInstanceOf(SlugEmUsoError)` e `rejects.toThrow('Slug já está em uso')`, com status e slug gravados intactos.
+3. Salvar de novo a própria empresa com o slug dela → sem conflito.
+4. `findBySlug` acha a empresa e devolve `null` para slug inexistente.
+5. Conflito forçado: uma vez só, e a rival fica guardada.
+
+Recomendado também, no caso de uso: terceira empresa homônima → `cafe-serra-verde-3` (`aprovar-empresa.spec.ts`).
+**Where**: `test/doubles/in-memory-empresa-repository.spec.ts` (novo); `src/domain/fivo/empresas/use-cases/aprovar-empresa.spec.ts`
+**Depends on**: None
+**Requirement**: VIT-01 (Slug AC5), VIT-06
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit
+**Gate**: quick
+**Done when**:
+
+- [ ] Os 5 casos acima com asserção no valor exato
+- [ ] Mutantes M52 e M53 morrem
+- [ ] Gate `quick` passa
+
+**Commit**: `test(api): contrato de slug do double de empresa`
+
+---
+
+### T49: JSDoc do contrato de `CampanhaRepository`
+
+**What**: (1) No JSDoc de `salvar`, acrescentar que ele grava `slug` e lança `SlugEmUsoError` quando o par `(empresaId, slug)` já existe (What da T6, design §Portas). (2) Restaurar o JSDoc de `listarEmAnalise` ("Campanhas `EM_ANALISE` e campanhas `APROVADA` com alteração pendente.").
+**Where**: `src/domain/fivo/campanhas/ports/campanha-repository.ts`
+**Depends on**: None
+**Requirement**: VIT-01, VIT-02
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: none
+**Gate**: quick
+**Done when**:
+
+- [ ] JSDoc de `salvar` cita `slug`, a unicidade por empresa e `SlugEmUsoError`
+- [ ] JSDoc de `listarEmAnalise` de volta
+- [ ] Gate `quick` passa
+
+**Commit**: `docs(api): contrato de slug na porta de campanha`
+
+---
+
+---
+
+### T60: Remover `/parceiros/[id]` e `mockPartners`
+
+**What**: Apagar `web/src/app/parceiros/[id]/page.tsx` (detalhe fictício substituído por `/empresa/{slug}`) e `web/src/lib/mockPartners.ts`. Acrescentar o teste estrutural que a T40 pede: nenhum arquivo de `web/src` importa `mockPartners`.
+**Where**: `web/src/app/parceiros/[id]/page.tsx`, `web/src/lib/mockPartners.ts`, `web/tests/unit/` (teste estrutural novo)
+**Depends on**: None
+**Requirement**: VIT-07, VIT-09 (Done-when da T34 e da T40)
+**Priority**: Major
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: unit (estrutural)
+**Gate**: web
+**Done when**:
+- [ ] `parceiros/[id]` e `mockPartners.ts` não existem; nenhum link aponta para `/parceiros/{id}`
+- [ ] Teste estrutural varre `web/src/**/*.{ts,tsx}` e falha se algum arquivo importar `mockPartners`
+- [ ] Gate `web` passa
+
+**Commit**: `fix(web): remove detalhe fictício de parceiro`
+
+---
+
+### T61: Cobrir o card e o subtópico da página pública
+
+**What**: Em `PaginaEmpresaPublica.test.tsx`, conferir: `img` do logo com `src` = `/api/empresas/publicas/{slug}/logo` quando `temLogo`; link do `site` com `href`; a descrição, "Beneficiada: Instituto X" e a vigência do subtópico; o evento `error` na imagem trocando para as iniciais; e a ausência de "Campanha ainda não iniciada" em `EM_ANDAMENTO`.
+**Where**: `web/tests/component/PaginaEmpresaPublica.test.tsx`
+**Depends on**: None
+**Requirement**: VIT-07 AC6, AC8, AC10; edge case "logo que não carrega"
+**Priority**: Major
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: component
+**Gate**: web
+**Done when**:
+- [ ] W9, W10, W11 e W12 morrem: chip sempre visível, `onError` removido, `href` do site trocado e beneficiada por `tipo` fazem algum teste falhar
+- [ ] Gate `web` passa
+
+**Commit**: `test(web): card e subtópico da página pública`
+
+---
+
+### T62: Rolagem até a campanha certa e rota do QR
+
+**What**: Fixture com 2 campanhas e `slugCampanha` = a 2ª. Conferir que `scrollIntoView` foi chamado no elemento cujo `id` é o da 2ª (por exemplo, `scrollSpy.mock.contexts[0]` com `id` = slug). Acrescentar um teste de `app/empresa/[slug]/[slugCampanha]/page.tsx` que renderiza a página com `params` resolvidos e prova que o `slugCampanha` chega ao componente, pela rolagem.
+**Where**: `web/tests/component/EmpresaCampanhaScroll.test.tsx`
+**Depends on**: None
+**Requirement**: VIT-07 AC7 (Done-when da T34: "no subtópico certo")
+**Priority**: Major
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: component
+**Gate**: web
+**Done when**:
+- [ ] W8b (rolar para a 1ª campanha) e W13 (página sem `slugCampanha`) morrem
+- [ ] Gate `web` passa
+
+**Commit**: `test(web): rolagem até a campanha do QR`
+
+---
+
+### T63: "Motivo da rejeição" só em `REJEITADA`
+
+**What**: Teste com `EM_ANALISE` e `motivoUltimaRejeicao` preenchido (reenvio depois de rejeição) conferindo que "Motivo da rejeição" não aparece.
+**Where**: `web/tests/component/DetalheCampanha.test.tsx`
+**Depends on**: None
+**Requirement**: VIT-11 AC2
+**Priority**: Minor
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: component
+**Gate**: web
+**Done when**:
+- [ ] W25 morre
+- [ ] Gate `web` passa
+
+**Commit**: `test(web): motivo da rejeição só em REJEITADA`
+
+---
+
+### T64: Estabilizar o primeiro teste do wizard sob carga
+
+**What**: `CampaignWizardNew.test.tsx:113` estoura os 5 s em 2 de 3 execuções completas do gate e passa em 832 ms isolado. Dar timeout explícito ao arquivo (por exemplo, `{ timeout: 15000 }` nos testes que percorrem os 3 passos, como `ui-states.test.tsx` já faz) ou aquecer os passos num `beforeAll`.
+**Where**: `web/tests/component/CampaignWizardNew.test.tsx`
+**Depends on**: None
+**Requirement**: Gate `web` (T41)
+**Priority**: Minor
+**Autor**: 🤖 agente (exceção AD-023, 2026-11-08)
+**Tests**: component
+**Gate**: web
+**Done when**:
+- [ ] Três execuções seguidas de `npm test` sem falha neste arquivo
+- [ ] Gate `web` passa
+
+**Commit**: `test(web): timeout do wizard sob carga`
+
+---
+
 ## Phase Execution Map
 
 ```
@@ -1396,6 +1611,8 @@ Fase 5: T23 T24 T25 T26 T27 T28
 Fase 6: T29 T30 T31 T35 T36 T38
 Fase 7: T32 T33 T34 T39 T40
 Fase 8: T37 T41 T42 T43 T44
+Fase 3b: T45 T46 T47 T48 T49
+Fase 8b: T60 T61 T62 T63 T64
 ```
 
 ### Divisão sugerida do `web` entre 6 pessoas

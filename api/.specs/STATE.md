@@ -191,6 +191,7 @@
 - **Scope**: `vitrine-e-selo` (nova); supersede AD-004, AD-007 e AD-009; emenda AD-003 (comprovante deixa de ser conteúdo moderado na v1) e `campanhas` (CAMP-09 e CAMP-10 saem da v1). Autoria: domínio e `web` pelo grupo (6 pessoas); o agente faz só a infra do `api`, depois do gate de handoff do domínio (mesma regra do AD-020/AD-021). O agente não escreve nem edita código em `web/**` desta feature; pode ler, revisar e rodar gates.
 - **Date**: 2026-10-28
 - **Status**: active
+- **Exceção de autoria (2026-11-08, gate de handoff)**: a rodada 1 das verificações deu FAIL no domínio (`validation-dominio.md`) e no `web` (`validation-web.md`). O usuário pediu explicitamente que o agente fizesse as correções ("rode o verifier e faça as correções necessárias"). Com isso, o agente aplica as tasks T45–T49 (testes e JSDoc em `src/domain/**` e `test/doubles/**`) e T60–T64 (`web/**`: remoção de `/parceiros/[id]` e `mockPartners`, e testes), além de trocar o gate `Web` (T65 da verificação). A autorização cobre o ciclo de correção e reverificação (até 3 rodadas). As tasks T1–T18 e T29–T44 continuam de autoria humana.
 
 ## Handoff
 

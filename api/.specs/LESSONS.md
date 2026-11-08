@@ -48,24 +48,6 @@ Corroborated across multiple features. Safe to apply as guidance.
 
 Seen once or not yet corroborated. Tracked, not trusted.
 
-### L-002 - Copy spec-quoted error message strings verbatim into the error class constructor, including punctuation, instead of freehand-restating them.
-- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `domain/fivo/application/errors` · harmful: 0
-- features: cadastro-empresa
-- evidence: EMP-01 AC2, EMP-01 AC4, EMP-06 AC2 (domain/fivo/application/errors)
-- last seen: 2026-09-18T02:53:50Z
-
-### L-003 - Entity.equals compares only the id, so a repository roundtrip test that leans on equals() proves no field fidelity — assert every mapped column explicitly, including the optional ones.
-- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `infra/database/prisma/mappers` · harmful: 0
-- features: cadastro-empresa
-- evidence: M5-M14 / src/core/types/entities/entity.ts:16-26 (infra/database/prisma/mappers)
-- last seen: 2026-09-18T15:12:11Z
-
-### L-004 - A use case writing two aggregates through separate repository ports is atomic only with in-memory doubles — decide the transaction boundary when the real persistence adapter lands, not after.
-- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `domain/fivo/application/use-cases` · harmful: 0
-- features: cadastro-empresa
-- evidence: EMP-01 AC1 / src/domain/fivo/application/use-cases/criar-empresa.ts:150-151 (domain/fivo/application/use-cases)
-- last seen: 2026-09-18T15:12:11Z
-
 ### L-005 - Assert result.isLeft() unconditionally before inspecting the error; never put expects inside an if on the Either
 - signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain-tests` · harmful: 0
 - features: catalogo-instituicoes
@@ -215,6 +197,90 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - features: campanhas
 - evidence: validation.md rodada 2, mutantes S34 S45 S46 (campanhas.controller.ts:220-222,277-282 spread do corpo após os ids da sessão; campanhas.dto.ts:42,50) (routes)
 - last seen: 2026-10-28T01:58:36Z
+
+### L-035 - A contract test that checks only the object's keys needs a sibling toEqual on the values, or a wrong projection survives
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-dominio.md M36-M47 / buscar-empresa-publica.spec.ts (domain-tests)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-036 - In a filter-exclusion test, the excluded items must satisfy every other condition so only the condition under test removes them
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-dominio.md M41 / buscar-empresa-publica.spec.ts:118-145 (domain-tests)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-037 - Every in-memory double that fixes a contract the infra will implement needs its own spec, not only indirect coverage through use cases
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `test-doubles` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-dominio.md M52-M53 / test/doubles/in-memory-empresa-repository.ts (test-doubles)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-038 - When a spec value depends on an argument the use case passes to a pure function, test it at the use case, not only in the function
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-dominio.md M14, M22 / aprovar-empresa.ts, aprovar-campanha.ts (domain-tests)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-039 - A character class or an and-so-on rule in the spec needs a case for each member and for one iteration past the trivial ones
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-dominio.md M2, M9 / slug.spec.ts (domain-tests)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-040 - A temporary port stub that rejects needs a Done-when line in the infra task restoring the e2e count and a warning that the integrated env is broken
+- signal: `gate_fail` · recurrence: 1 feature(s) · scope: `infra` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-dominio.md Gate e2e 507/546 / prisma-empresa-repository.ts stubs (infra)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-041 - When the spec fixes a per-resource 404 message, check in the design that the generic exception filter does not overwrite the domain text
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `routes` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-dominio.md follow-up 2 / src/infra/http/domain-exception.filter.ts:65-71 (routes)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-042 - When testing an effect on an element such as scroll or focus, render at least two candidates and assert which element received it
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `web-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-web.md W8b, W13 / web/tests/component/EmpresaCampanhaScroll.test.tsx:60 (web-tests)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-043 - For every element shown only in a given state, also test its absence in another state with the same data that would trigger it
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `web-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-web.md W9, W25 / PaginaEmpresaPublica.test.tsx:85, DetalheCampanha.test.tsx:195 (web-tests)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-044 - When an AC lists the fields of a card, give each listed field its own assertion; asserting the title does not cover the rest
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `web-tests` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-web.md W10-W12 / T33 (web-tests)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-045 - Every removal a Done-when asks for needs evidence: the file gone from the diff or a structural test, not only swapped links
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `web` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-web.md T34, T40 / web/src/app/parceiros/[id]/page.tsx (web)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-046 - In Next projects the typecheck gate must generate route types with next typegen before tsc, or the result depends on the local cache
+- signal: `gate_fail` · recurrence: 1 feature(s) · scope: `web` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-web.md Gate tsc / web/src/app/layout.tsx:18 (web)
+- last seen: 2026-11-08T13:38:36Z
+
+### L-047 - When the spec says period or date without a format, fix the format in the design for every screen
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `design` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-web.md SP1 (design)
+- last seen: 2026-11-08T13:38:37Z
+
+### L-048 - When the spec orders by name, state the tiebreak for names that differ only in case or accents
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `design` · harmful: 0
+- features: vitrine-e-selo
+- evidence: validation-dominio.md SP1 / listar-parceiros.ts collator (design)
+- last seen: 2026-11-08T13:38:37Z
 
 ## Quarantined (failed when applied - ignore)
 
