@@ -123,6 +123,10 @@ navegador ──HTTPS──▶ web (Next, :3001) ──/api/*──▶ api (Nest
 | --------- | ----------- | ----------------------------------------------------------------------------------------------- |
 | `API_URL` | sim         | Endereço interno da API visto pelo servidor do Next (ex.: `http://api:3000`). Nunca chega ao navegador. Defina **já no `next build`**, porque o Next fixa os rewrites no build. |
 
+### Produção (issoimporta.app)
+
+Push em `main` dispara o [`deploy.yml`](.github/workflows/deploy.yml): testes, build das imagens, smoke test, publicação no GHCR e deploy por SSH no servidor, com backup do banco antes das migrations e rollback se o health check falhar. O health da stack é `GET /api/health` (`{"status":"ok"}` quando a API alcança o banco). Setup do servidor, nginx, secrets e operação em [`docs/deploy.md`](docs/deploy.md).
+
 ### Com Docker
 
 Cada subprojeto tem seu `Dockerfile` (contexto de build na própria pasta), e o [`docker-compose.yml`](docker-compose.yml) da raiz sobe a stack inteira:
