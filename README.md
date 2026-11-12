@@ -125,7 +125,7 @@ navegador ──HTTPS──▶ web (Next, :3001) ──/api/*──▶ api (Nest
 
 ### Produção (issoimporta.app)
 
-Push em `main` dispara o [`deploy.yml`](.github/workflows/deploy.yml): testes, build das imagens, smoke test, publicação no GHCR e deploy por SSH no servidor, com backup do banco antes das migrations e rollback se o health check falhar. O health da stack é `GET /api/health` (`{"status":"ok"}` quando a API alcança o banco). Setup do servidor, nginx, secrets e operação em [`docs/deploy.md`](docs/deploy.md).
+Deploy manual por SSH/SCP: preencha `deploy\.env.deploy` (a partir do `.env.deploy.example`, ignorado pelo git) e rode `.\deploy\deploy-manual.ps1`. O script envia o commit atual e faz o build das imagens no servidor, com backup do banco antes das migrations e rollback se o health check falhar. Também há o [`deploy.yml`](.github/workflows/deploy.yml), disparo manual no Actions. O health da stack é `GET /api/health` (`{"status":"ok"}` quando a API alcança o banco). Setup do servidor, nginx, secrets e operação em [`docs/deploy.md`](docs/deploy.md).
 
 ### Com Docker
 

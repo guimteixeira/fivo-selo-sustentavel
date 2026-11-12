@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# Roda NO SERVIDOR, chamado pelo workflow de deploy via SSH:
+# Roda NO SERVIDOR. Dois jeitos de chamar:
 #
-#   printf '%s\n' "$GHCR_TOKEN" | ssh ... "bash $DEPLOY_DIR/remote-deploy.sh <api-image> <web-image> <ghcr-user>"
+#   Workflow (imagens do GHCR):
+#     printf '%s\n' "$GHCR_TOKEN" | ssh ... "bash $DEPLOY_DIR/remote-deploy.sh <api-image> <web-image> <ghcr-user>"
+#
+#   Deploy manual (imagens já construídas no servidor por remote-manual.sh):
+#     PULAR_PULL=1 bash remote-deploy.sh <api-image> <web-image> </dev/null
 #
 # O token do GHCR chega pela stdin (não aparece em `ps` nem no histórico) e
 # é o GITHUB_TOKEN do job: expira sozinho quando o job termina. O login no
@@ -15,11 +19,14 @@ set -Eeuo pipefail
 
 cd "$(dirname "$(readlink -f "$0")")"
 
-API_IMAGE_NOVA="${1:?uso: remote-deploy.sh <api-image> <web-image> <ghcr-user>}"
-WEB_IMAGE_NOVA="${2:?uso: remote-deploy.sh <api-image> <web-image> <ghcr-user>}"
-GHCR_USER="${3:?uso: remote-deploy.sh <api-image> <web-image> <ghcr-user>}"
+API_IMAGE_NOVA="${1:?uso: remote-deploy.sh <api-image> <web-image> [ghcr-user]}"
+WEB_IMAGE_NOVA="${2:?uso: remote-deploy.sh <api-image> <web-image> [ghcr-user]}"
+GHCR_USER="${3:-}"
+PULAR_PULL="${PULAR_PULL:-0}"
 GHCR_TOKEN=""
-IFS= read -r GHCR_TOKEN || true
+if [[ -n "$GHCR_USER" ]]; then
+  IFS= read -r GHCR_TOKEN || true
+fi
 
 COMPOSE_FILE="docker-compose.prod.yml"
 VERSAO_NO_AR=".versao-no-ar"
@@ -89,8 +96,12 @@ backup_banco() {
     sort -rn | tail -n +$((BACKUPS_MANTIDOS + 1)) | cut -d' ' -f2- | xargs -r rm -f
 }
 
-log "baixando imagens"
-API_IMAGE="$API_IMAGE_NOVA" WEB_IMAGE="$WEB_IMAGE_NOVA" compose pull --quiet
+if [[ "$PULAR_PULL" == 1 ]]; then
+  log "usando imagens locais: $API_IMAGE_NOVA, $WEB_IMAGE_NOVA"
+else
+  log "baixando imagens"
+  API_IMAGE="$API_IMAGE_NOVA" WEB_IMAGE="$WEB_IMAGE_NOVA" compose pull --quiet
+fi
 
 backup_banco
 

@@ -1,6 +1,6 @@
 # Deploy de produção (https://issoimporta.app).
 #
-# push em main (ou disparo manual) ->
+# disparo manual (Actions -> Deploy -> Run workflow) ->
 #   1. quality: quick-gate (tsc, lint, testes unitários, build do web)
 #   2. api-e2e: testes HTTP da API contra um Postgres descartável
 #   3. build:   gera as imagens, sobe a stack de produção no runner, roda o
@@ -16,9 +16,10 @@
 
 name: Deploy
 
+# Só manual: o deploy padrão é o deploy/deploy-manual.ps1 (scp, sem secrets
+# no GitHub). Para voltar a ser automático, adicione `push: branches: [main]`
+# depois de configurar o environment `production` (deploy/configurar-github.ps1).
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

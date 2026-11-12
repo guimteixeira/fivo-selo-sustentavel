@@ -1,6 +1,27 @@
 # Deploy de produção: issoimporta.app
 
-Cada push em `main` (ou **Actions → Deploy → Run workflow**) roda o [`deploy.yml`](../.github/workflows/deploy.yml):
+## Deploy manual (padrão)
+
+Roda da sua máquina, por SSH/SCP. Os dados do servidor e os segredos ficam só em `deploy\.env.deploy`, que o git ignora.
+
+```powershell
+copy deploy\.env.deploy.example deploy\.env.deploy   # uma vez: preencha host, porta, usuário, chave .pem, pasta e segredos
+.\deploy\deploy-manual.ps1                           # a cada deploy (-Sim pula as confirmações)
+```
+
+O [`deploy-manual.ps1`](../deploy/deploy-manual.ps1):
+
+1. Valida a configuração. No primeiro deploy, gera a `POSTGRES_PASSWORD` e grava no `.env.deploy`. Não troque essa senha depois.
+2. Empacota o **commit atual** com `git archive`. Só entram arquivos versionados, nunca `.env`, `node_modules` ou chaves. Alterações não commitadas não sobem.
+3. Envia o pacote e o `.env` de produção por `scp` para `DEPLOY_DIR` (pasta `700`, `.env` `600`). O `.env` temporário local é apagado no fim.
+4. No servidor, o [`remote-manual.sh`](../deploy/remote-manual.sh) faz o build das imagens lá mesmo, sem registry público, e chama o [`remote-deploy.sh`](../deploy/remote-deploy.sh): backup do banco, migrations, `up`, espera o health e volta a versão anterior se falhar. Depois roda o [`smoke.sh`](../deploy/smoke.sh) em `127.0.0.1` e guarda os 3 últimos releases e imagens.
+5. Confere `https://issoimporta.app/api/health`. Só avisa, sem falhar, se o DNS, o nginx ou o certificado ainda não estiverem prontos.
+
+Pré-requisitos no servidor: Docker com o plugin compose, `curl`, o usuário SSH no grupo `docker` com permissão de escrita em `DEPLOY_DIR`, e uns 2 GB de RAM livres para o build do Next. Os passos 1 e 2 abaixo continuam valendo. O passo 3 (secrets no GitHub) só é necessário para o deploy via Actions.
+
+## Deploy pelo GitHub Actions (opcional)
+
+**Actions → Deploy → Run workflow** roda o [`deploy.yml`](../.github/workflows/deploy.yml), depois de configurar os secrets do passo 3:
 
 | Job | O que faz |
 | --- | --- |
