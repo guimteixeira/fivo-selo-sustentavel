@@ -160,8 +160,10 @@ $scpOpts = @('-q', '-i', $sshKey, '-P', $sshPort, '-o', 'IdentitiesOnly=yes',
 $destino = "$sshUser@$sshHost"
 
 function Remoto([string] $comando) {
-  & ssh @sshOpts $destino $comando
-  return $LASTEXITCODE
+  # Out-Host: a saida do servidor vai para a tela, e a funcao devolve so o
+  # codigo de saida (sem isso, o texto entraria no valor de retorno).
+  & ssh @sshOpts $destino $comando | Out-Host
+  return [int] $LASTEXITCODE
 }
 function Enviar([string] $local, [string] $remoto) {
   & scp @scpOpts $local "${destino}:$remoto"
