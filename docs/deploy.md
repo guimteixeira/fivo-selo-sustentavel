@@ -120,10 +120,13 @@ O banco começa vazio. Entre como admin e cadastre ao menos uma causa (`/admin/c
 
 ## Operação no servidor
 
+Use o atalho `dc.sh` da pasta do deploy. Ele já passa as imagens em uso (`.versao-no-ar`); um `docker compose` puro falha com "required variable API_IMAGE is missing".
+
 ```bash
-cd /opt/issoimporta
-docker compose -f docker-compose.prod.yml ps
-docker compose -f docker-compose.prod.yml logs --tail 200 api web migrate
+cd /opt/issoimporta                                  # ou o DEPLOY_DIR configurado
+./dc.sh ps
+./dc.sh logs --tail 200 api web migrate
+./dc.sh exec api npm run seed:demo                   # dados de demonstração (defina SEED_SENHA com -e)
 cat .versao-no-ar                                    # imagens em produção
 
 # Backup manual (o deploy já faz um antes de cada migration, guarda os 10 últimos em backups/)

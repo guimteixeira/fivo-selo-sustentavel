@@ -24,6 +24,7 @@ docker compose version >/dev/null 2>&1 || { log "plugin docker compose ausente n
 
 install -m 644 "$RELEASE/deploy/docker-compose.prod.yml" "$DEPLOY_DIR/docker-compose.prod.yml"
 install -m 755 "$RELEASE/deploy/remote-deploy.sh" "$DEPLOY_DIR/remote-deploy.sh"
+install -m 755 "$RELEASE/deploy/dc.sh" "$DEPLOY_DIR/dc.sh"
 
 API_IMAGE="issoimporta-api:$TAG"
 WEB_IMAGE="issoimporta-web:$TAG"
