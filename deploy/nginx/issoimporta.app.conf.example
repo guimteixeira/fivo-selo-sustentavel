@@ -48,9 +48,10 @@ server {
 
 # www -> domínio principal. O QR Code do selo usa https://issoimporta.app.
 server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
-    http2 on;
+    # `listen ... http2` funciona em qualquer nginx (o Ubuntu 24.04 traz o 1.24,
+    # que ainda não tem a diretiva `http2 on;`).
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
     server_name www.issoimporta.app;
     server_tokens off;
 
@@ -62,9 +63,10 @@ server {
 }
 
 server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
-    http2 on;
+    # `listen ... http2` funciona em qualquer nginx (o Ubuntu 24.04 traz o 1.24,
+    # que ainda não tem a diretiva `http2 on;`).
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
     server_name issoimporta.app;
     server_tokens off;
 
