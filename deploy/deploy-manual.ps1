@@ -173,12 +173,29 @@ New-Item -ItemType Directory -Path $tmp -Force | Out-Null
 
 try {
   Passo 'Testando SSH e Docker no servidor'
-  if ((Remoto 'docker compose version >/dev/null 2>&1 && echo ok') -ne 0) {
+  if ((Remoto 'echo ssh ok') -ne 0) {
     Write-Host 'Dicas:' -ForegroundColor Yellow
     Write-Host '  - confira SSH_HOST, SSH_PORT, SSH_USER e SSH_KEY'
     Write-Host '  - chave "UNPROTECTED": icacls "<chave.pem>" /inheritance:r /grant:r "$($env:USERNAME):R"'
-    Write-Host '  - o usuario precisa estar no grupo docker (sudo usermod -aG docker <usuario>) e ter o plugin compose'
-    Falhar 'nao foi possivel usar SSH + docker compose no servidor'
+    Falhar 'nao foi possivel conectar por SSH'
+  }
+  $diagnostico = 'command -v docker >/dev/null || { echo "docker nao instalado"; exit 11; }; ' +
+    'docker info >/dev/null 2>&1 || { echo "usuario $(whoami) sem acesso ao docker (fora do grupo docker?)"; exit 12; }; ' +
+    'docker compose version >/dev/null 2>&1 || { echo "plugin docker compose (v2) ausente"; exit 13; }; ' +
+    'command -v curl >/dev/null || echo "aviso: curl ausente (smoke test sera pulado)"; ' +
+    'echo "docker ok: $(docker compose version --short)"'
+  $codigo = Remoto $diagnostico
+  switch ($codigo) {
+    0 { }
+    12 {
+      Write-Host "  No servidor: sudo usermod -aG docker $sshUser   (depois saia e entre de novo)" -ForegroundColor Yellow
+      Falhar 'usuario sem permissao no docker'
+    }
+    13 {
+      Write-Host '  No servidor (Ubuntu): sudo apt-get install -y docker-compose-plugin' -ForegroundColor Yellow
+      Falhar 'docker compose v2 ausente'
+    }
+    default { Falhar 'docker indisponivel no servidor' }
   }
 
   Passo 'Empacotando o codigo (git archive)'
