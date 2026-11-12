@@ -162,7 +162,10 @@ $destino = "$sshUser@$sshHost"
 function Remoto([string] $comando) {
   # Out-Host: a saida do servidor vai para a tela, e a funcao devolve so o
   # codigo de saida (sem isso, o texto entraria no valor de retorno).
-  & ssh @sshOpts $destino $comando | Out-Host
+  # Base64: o Windows PowerShell 5.1 remove aspas duplas dos argumentos de
+  # programas nativos; codificado, o comando chega intacto ao bash.
+  $b64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($comando))
+  & ssh @sshOpts $destino "echo $b64 | base64 -d | bash" | Out-Host
   return [int] $LASTEXITCODE
 }
 function Enviar([string] $local, [string] $remoto) {
